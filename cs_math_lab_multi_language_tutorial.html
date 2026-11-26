@@ -1,0 +1,3146 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Math Lab | University Computer Science Mathematics Tutorial</title>
+
+  <!-- Self-contained embedded CSS (zero external CDN dependencies that could fail or block) -->
+  <style>
+    :root {
+      --bg-page: #f5f3ff;
+      --bg-surface: #ffffff;
+      --bg-card: #ede9fe;
+      --bg-canvas: #f8fafc;
+      --border-subtle: #ddd6fe;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --grid-dot: rgba(109, 40, 217, 0.13);
+      --magenta: #ff007f;
+      --magenta-soft: rgba(255, 0, 127, 0.16);
+      --purple: #8b5cf6;
+      --deep-purple: #6d28d9;
+      --orchid: #7c3aed;
+      --shadow-mag: 0 0 18px rgba(255, 0, 127, 0.28);
+      --shadow-purp: 0 0 18px rgba(139, 92, 246, 0.28);
+    }
+
+    html.dark {
+      --bg-page: #050507;
+      --bg-surface: #0d0d14;
+      --bg-card: #141422;
+      --bg-canvas: #07070b;
+      --border-subtle: #292142;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --grid-dot: rgba(139, 92, 246, 0.15);
+      --orchid: #c4b5fd;
+    }
+
+    html.dark.amoled {
+      --bg-page: #000000;
+      --bg-surface: #040407;
+      --bg-card: #0a0a11;
+      --bg-canvas: #000000;
+      --border-subtle: #2e1852;
+      --grid-dot: rgba(255, 0, 127, 0.11);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+      background-size: 24px 24px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    ::selection {
+      background: var(--magenta);
+      color: #ffffff;
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.45);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--magenta);
+    }
+
+    /* Layout Helpers */
+    .container-wide {
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .surface-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+    }
+
+    .card-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .canvas-box {
+      position: relative;
+      width: 100%;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .canvas-box canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Header & Horizontal Navigation */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 20px;
+    }
+
+    .header-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--magenta), var(--purple));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: var(--shadow-mag);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--magenta), var(--orchid), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--magenta-soft);
+      color: var(--magenta);
+      border: 1px solid rgba(255, 0, 127, 0.35);
+    }
+
+    .brand-sub {
+      margin: 1px 0 0;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .module-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 2px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 11px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-card);
+      border-color: var(--border-subtle);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(139, 92, 246, 0.24));
+      border-color: var(--magenta);
+      box-shadow: var(--shadow-mag);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lang-group {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      gap: 2px;
+    }
+
+    .lang-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .lang-btn:hover {
+      color: var(--magenta);
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--magenta), var(--purple));
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.45);
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 11px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--purple);
+      box-shadow: var(--shadow-purp);
+    }
+
+    /* Main Workspace & Grids */
+    .main-wrap {
+      padding: 16px 20px 28px;
+    }
+
+    .module-panel {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .module-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .banner-bar {
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .banner-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tag-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 8px;
+      background: var(--magenta-soft);
+      color: var(--magenta);
+      border: 1px solid rgba(255, 0, 127, 0.35);
+    }
+
+    .tag-pill.purple {
+      background: rgba(139, 92, 246, 0.18);
+      color: var(--orchid);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .section-desc {
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .formula-note {
+      font-size: 12px;
+      color: var(--orchid);
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (min-width: 1024px) {
+      .split-grid {
+        grid-template-columns: 5fr 7fr;
+      }
+      .split-grid.even-split {
+        grid-template-columns: 6fr 6fr;
+      }
+      .split-grid.graph-split {
+        grid-template-columns: 7fr 5fr;
+      }
+    }
+
+    .col-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pane {
+      padding: 18px;
+    }
+
+    .row-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .grid-6 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .grid-6 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .grid-6 {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+    }
+
+    /* Sliders, Buttons, Selects */
+    .control-box {
+      padding: 10px 12px;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--purple), var(--magenta));
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--magenta);
+      box-shadow: 0 0 10px rgba(255, 0, 127, 0.9);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--magenta);
+      box-shadow: 0 0 10px rgba(255, 0, 127, 0.9);
+      cursor: pointer;
+    }
+
+    select.cyber-select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select.cyber-select.compact {
+      width: auto;
+      padding: 6px 10px;
+    }
+
+    .btn-action {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .btn-action:hover:not(:disabled) {
+      border-color: var(--magenta);
+      transform: translateY(-1px);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      border: none;
+      background: linear-gradient(135deg, var(--magenta), var(--purple));
+      color: #ffffff;
+      box-shadow: var(--shadow-mag);
+    }
+
+    .btn-purple {
+      border: none;
+      background: var(--purple);
+      color: #ffffff;
+    }
+
+    .btn-danger-soft {
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      background: rgba(244, 63, 94, 0.14);
+      color: #fb7185;
+    }
+
+    .btn-danger-soft:hover {
+      background: #e11d48;
+      color: #ffffff;
+    }
+
+    .text-mag { color: var(--magenta); }
+    .text-purp { color: var(--orchid); }
+    .text-muted { color: var(--text-muted); }
+    .text-ok { color: #34d399; }
+    .text-warn { color: #fbbf24; }
+    .text-err { color: #fb7185; }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .badge-ok {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+    }
+
+    .badge-err {
+      background: rgba(244, 63, 94, 0.18);
+      color: #fb7185;
+    }
+
+    /* Matrix Display */
+    .matrix-bracket {
+      display: inline-flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .matrix-paren {
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--magenta);
+      line-height: 1;
+      margin: 0 4px;
+    }
+
+    .matrix-2x2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px 18px;
+      text-align: center;
+    }
+
+    /* Graph Table */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      padding: 6px 8px;
+      color: var(--orchid);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    table.data-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.14);
+    }
+
+    /* Quiz Option Buttons */
+    .quiz-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      border-color: var(--magenta);
+    }
+
+    .quiz-opt:disabled {
+      cursor: default;
+    }
+
+    .quiz-letter {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(139, 92, 246, 0.22);
+      color: var(--orchid);
+      font-weight: 700;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .quiz-opt.correct {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.16);
+    }
+
+    .quiz-opt.wrong {
+      border-color: #f43f5e;
+      background: rgba(244, 63, 94, 0.16);
+    }
+
+    .app-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      padding: 14px 20px;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header & Horizontal Module Switcher -->
+  <header class="app-header">
+    <div class="container-wide header-inner">
+      <div class="brand-group">
+        <div class="brand-logo mono">∑</div>
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h1 id="brandTitle" class="brand-title">CS MATH LAB</h1>
+            <span id="brandBadge" class="brand-badge mono">CS-301 // WIDE LAB</span>
+          </div>
+          <p id="brandSubtitle" class="brand-sub">University Computer Science Mathematics &amp; Algorithmic Foundations</p>
+        </div>
+      </div>
+
+      <nav id="moduleNav" class="module-nav" aria-label="Modules">
+        <button type="button" data-target="bigo" class="nav-btn active">
+          <span>📈</span>
+          <span id="navBigo">1. Big-O Lab</span>
+        </button>
+        <button type="button" data-target="linear" class="nav-btn">
+          <span>📐</span>
+          <span id="navLinear">2. Linear Algebra</span>
+        </button>
+        <button type="button" data-target="discrete" class="nav-btn">
+          <span>🔐</span>
+          <span id="navDiscrete">3. Discrete &amp; RSA</span>
+        </button>
+        <button type="button" data-target="graphs" class="nav-btn">
+          <span>🕸️</span>
+          <span id="navGraphs">4. Graph Paths</span>
+        </button>
+        <button type="button" data-target="quiz" class="nav-btn">
+          <span>🏆</span>
+          <span id="navQuiz">5. Challenge Arena</span>
+        </button>
+      </nav>
+
+      <div class="header-controls">
+        <div id="langSwitcher" class="lang-group mono" role="group" aria-label="Language Selector">
+          <button type="button" data-lang="en" class="lang-btn active">EN</button>
+          <button type="button" data-lang="pl" class="lang-btn">PL</button>
+          <button type="button" data-lang="tr" class="lang-btn">TR</button>
+          <button type="button" data-lang="de" class="lang-btn">DE</button>
+        </div>
+
+        <button id="themeToggleBtn" type="button" class="theme-btn">
+          <span id="themeIcon">🌙</span>
+          <span id="themeLabel">Dark Neon</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="container-wide main-wrap">
+    <main>
+
+      <!-- =================================================================== -->
+      <!-- 1. ASYMPTOTIC ANALYSIS & BIG-O LAB                                  -->
+      <!-- =================================================================== -->
+      <section id="panel-bigo" class="module-panel active">
+        <div class="surface-panel banner-bar">
+          <div class="banner-left">
+            <span id="bigoTag" class="tag-pill mono">01 // COMPLEXITY</span>
+            <h2 id="bigoTitle" class="section-title">Asymptotic Growth Rates &amp; Formal Big-O Witnesses</h2>
+            <p id="bigoDesc" class="section-desc">Verify f(n) = 2n + 4 ≤ c · n² across shaded witness region n ≥ n₀.</p>
+          </div>
+          <span class="formula-note mono">f(n) ∈ O(g(n)) ⇔ ∃ c &gt; 0, n₀ ≥ 1 : ∀ n ≥ n₀, 0 ≤ f(n) ≤ c · g(n)</span>
+        </div>
+
+        <div class="split-grid">
+          <div class="surface-panel pane col-stack">
+            <div class="row-flex">
+              <strong id="bigoParamsHeading" class="text-purp" style="font-size:14px;">🎛 Witness &amp; Growth Parameters</strong>
+              <button id="bigoResetBtn" type="button" class="btn-action mono reset-btn-text">Reset</button>
+            </div>
+
+            <div class="grid-3">
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="bigoN"><span class="lbl-max">Max</span> n:</label>
+                  <span id="bigoNVal" class="text-mag" style="font-weight:700;">16</span>
+                </div>
+                <input id="bigoN" type="range" min="4" max="32" step="1" value="16" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="bigoC"><span class="lbl-const">Const</span> c:</label>
+                  <span id="bigoCVal" class="text-purp" style="font-weight:700;">1.5</span>
+                </div>
+                <input id="bigoC" type="range" min="0.2" max="5.0" step="0.1" value="1.5" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="bigoN0"><span class="lbl-thresh">Thresh</span> n₀:</label>
+                  <span id="bigoN0Val" class="text-mag" style="font-weight:700;">4</span>
+                </div>
+                <input id="bigoN0" type="range" min="1" max="24" step="1" value="4" />
+              </div>
+            </div>
+
+            <div>
+              <div id="activeCurvesLabel" class="mono text-muted" style="font-size:11px; text-transform:uppercase; margin-bottom:6px;">
+                Active Complexity Curves
+              </div>
+              <div id="bigoToggles" class="grid-3"></div>
+            </div>
+
+            <div class="card-box" style="padding:12px 14px;">
+              <div class="row-flex" style="margin-bottom:6px;">
+                <span id="upperBoundTitle" class="mono text-purp" style="font-size:12px; font-weight:700;">UPPER-BOUND PROOF</span>
+                <span id="bigoProofBadge" class="badge-status badge-ok mono">VALID BOUND</span>
+              </div>
+              <p class="section-desc" style="margin-bottom:8px;">
+                <span id="testingBoundPrefix">Testing</span> f(n) = 2n + 4 ≤ c · n² <span id="withConst">with</span> c = <strong id="proofC" class="mono text-mag">1.5</strong> <span id="forAllN">for all</span> n ≥ <strong id="proofN0" class="mono text-purp">4</strong>:
+              </p>
+              <div id="bigoProofMath" class="mono" style="font-size:12px; padding:8px 10px; border-radius:8px; background:var(--bg-canvas); border:1px solid var(--border-subtle);">
+                f(4) = 12 ≤ 1.5 × 4² = 24
+              </div>
+            </div>
+          </div>
+
+          <div class="col-stack">
+            <div class="surface-panel pane">
+              <div class="row-flex mono" style="font-size:12px; margin-bottom:8px;">
+                <strong id="bigoChartTitle">ASYMPTOTIC GROWTH VISUALIZER (OPERATIONS vs. INPUT SIZE n)</strong>
+                <span id="bigoShadedLegend" class="text-mag">Shaded Region = Witness Domain (n ≥ n₀)</span>
+              </div>
+              <div class="canvas-box" style="height:310px;">
+                <canvas id="bigoCanvas"></canvas>
+              </div>
+            </div>
+
+            <div class="surface-panel pane" style="padding:14px 18px;">
+              <div class="mono text-purp" style="font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:8px;">
+                <span id="opsCountAt">Operation Count at</span> n = <span id="opsNLabel">16</span>
+              </div>
+              <div id="bigoOpsGrid" class="grid-6 mono" style="font-size:12px;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- 2. LINEAR ALGEBRA & 2D MATRIX TRANSFORMATIONS                      -->
+      <!-- =================================================================== -->
+      <section id="panel-linear" class="module-panel">
+        <div class="surface-panel banner-bar">
+          <div class="banner-left">
+            <span id="linearTag" class="tag-pill purple mono">02 // LINEAR ALGEBRA</span>
+            <h2 id="linearTitle" class="section-title">2D Linear Transformations, Eigenvectors &amp; Determinant Area</h2>
+            <p id="linearDesc" class="section-desc">Basis vectors î ↦ [a, c]ᵀ, ĵ ↦ [b, d]ᵀ scale unit area by |det(M)|.</p>
+          </div>
+          <span class="formula-note mono">T(v) = Mv, &nbsp; Mv = λv</span>
+        </div>
+
+        <div class="split-grid">
+          <div class="surface-panel pane col-stack">
+            <div class="card-box row-flex" style="padding:12px 14px;">
+              <div class="matrix-bracket mono">
+                <span class="text-purp" style="margin-right:6px;">M =</span>
+                <span class="matrix-paren">[</span>
+                <div class="matrix-2x2">
+                  <span id="matDispA" class="text-mag">1.0</span>
+                  <span id="matDispB" class="text-purp">0.0</span>
+                  <span id="matDispC" class="text-mag">0.0</span>
+                  <span id="matDispD" class="text-purp">1.0</span>
+                </div>
+                <span class="matrix-paren">]</span>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="mono text-muted eigenspaces-lbl" style="font-size:11px;">Eigenspaces</span>
+                <button id="toggleEigenBtn" type="button" class="btn-action btn-primary mono">ON</button>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="matA" class="text-mag" style="font-weight:700;">a (îₓ):</label>
+                  <span id="matAVal" style="font-weight:700;">1.0</span>
+                </div>
+                <input id="matA" type="range" min="-2.5" max="2.5" step="0.1" value="1.0" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="matB" class="text-purp" style="font-weight:700;">b (ĵₓ):</label>
+                  <span id="matBVal" style="font-weight:700;">0.0</span>
+                </div>
+                <input id="matB" type="range" min="-2.5" max="2.5" step="0.1" value="0.0" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="matC" class="text-mag" style="font-weight:700;">c (îᵧ):</label>
+                  <span id="matCVal" style="font-weight:700;">0.0</span>
+                </div>
+                <input id="matC" type="range" min="-2.5" max="2.5" step="0.1" value="0.0" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="matD" class="text-purp" style="font-weight:700;">d (ĵᵧ):</label>
+                  <span id="matDVal" style="font-weight:700;">1.0</span>
+                </div>
+                <input id="matD" type="range" min="-2.5" max="2.5" step="0.1" value="1.0" />
+              </div>
+            </div>
+
+            <div>
+              <div id="presetsHeading" class="mono text-muted" style="font-size:11px; text-transform:uppercase; margin-bottom:6px;">
+                Canonical Transformation Presets
+              </div>
+              <div class="grid-3">
+                <button type="button" data-preset="identity" id="presetIdentity" class="btn-action mat-preset-btn">Identity (I)</button>
+                <button type="button" data-preset="rotate45" id="presetRotate" class="btn-action mat-preset-btn">Rotate 45°</button>
+                <button type="button" data-preset="shear" id="presetShear" class="btn-action mat-preset-btn">Shear (k=1)</button>
+                <button type="button" data-preset="scale" id="presetScale" class="btn-action mat-preset-btn">Scale (1.5, 0.5)</button>
+                <button type="button" data-preset="reflect" id="presetReflect" class="btn-action mat-preset-btn">Reflect (y=x)</button>
+                <button type="button" data-preset="singular" id="presetSingular" class="btn-action btn-danger-soft mat-preset-btn">Singular (det=0)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface-panel pane col-stack">
+            <div class="row-flex mono" style="font-size:12px;">
+              <div style="display:flex; flex-wrap:wrap; gap:14px;">
+                <span><strong class="text-mag">—</strong> î (<span class="col1-lbl">Col 1</span>)</span>
+                <span><strong class="text-purp">—</strong> ĵ (<span class="col2-lbl">Col 2</span>)</span>
+                <span><strong class="text-warn">---</strong> <span class="eigenspaces-lbl">Eigenspaces</span></span>
+              </div>
+              <span id="detOrientationTag" class="badge-status badge-ok">Area Scale: 1.00x</span>
+            </div>
+
+            <div class="canvas-box" style="height:310px;">
+              <canvas id="linearCanvas"></canvas>
+            </div>
+
+            <div class="grid-4 mono">
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:11px;"><span id="detLabel">Determinant</span> det(M)</div>
+                <div id="linDetVal" class="text-mag" style="font-size:16px; font-weight:800; margin-top:2px;">1.00</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:11px;"><span id="traceLabel">Trace</span> tr(M)</div>
+                <div id="linTraceVal" class="text-purp" style="font-size:16px; font-weight:800; margin-top:2px;">2.00</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div id="rankLabel" class="text-muted" style="font-size:11px;">Matrix Rank</div>
+                <div id="linRankVal" style="font-size:16px; font-weight:800; margin-top:2px;">2 (Full)</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:11px;"><span id="eigenLabel">Eigenvalues</span> λ₁,₂</div>
+                <div id="linEigenVal" class="text-warn" style="font-size:14px; font-weight:800; margin-top:4px;">1.00, 1.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- 3. DISCRETE MATH & RSA CRYPTOSYSTEM                                 -->
+      <!-- =================================================================== -->
+      <section id="panel-discrete" class="module-panel">
+        <div class="surface-panel banner-bar">
+          <div class="banner-left">
+            <span id="discreteTag" class="tag-pill mono">03 // DISCRETE &amp; CRYPTO</span>
+            <h2 id="discreteTitle" class="section-title">Modular Exponentiation (O(log b)) &amp; RSA Cryptosystem Lab</h2>
+          </div>
+          <span class="formula-note mono">Euler's Theorem: a^φ(n) ≡ 1 (mod n) &nbsp; (gcd(a, n) = 1)</span>
+        </div>
+
+        <div class="split-grid even-split">
+          <div class="surface-panel pane col-stack">
+            <div class="row-flex">
+              <strong id="modExpHeading" class="text-purp" style="font-size:14px;">🔁 Modular Exponentiation (a^b mod m)</strong>
+              <div class="mono" style="display:flex; align-items:center; gap:10px;">
+                <span id="modEqText" style="font-size:13px; font-weight:700;">3^13 mod 17</span>
+                <span id="modResultText" class="text-mag" style="font-size:18px; font-weight:900;">≡ 12</span>
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="modBase"><span class="lbl-base">Base</span> a:</label>
+                  <span id="modBaseVal" class="text-mag" style="font-weight:700;">3</span>
+                </div>
+                <input id="modBase" type="range" min="2" max="19" step="1" value="3" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="modExp"><span class="lbl-exp">Exp</span> b:</label>
+                  <span id="modExpVal" class="text-purp" style="font-weight:700;">13</span>
+                </div>
+                <input id="modExp" type="range" min="1" max="31" step="1" value="13" />
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="modMod"><span class="lbl-mod">Mod</span> m:</label>
+                  <span id="modModVal" class="text-mag" style="font-weight:700;">17</span>
+                </div>
+                <input id="modMod" type="range" min="5" max="29" step="1" value="17" />
+              </div>
+            </div>
+
+            <div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+              <div class="canvas-box" style="height:220px;">
+                <canvas id="modClockCanvas"></canvas>
+              </div>
+              <div class="card-box" style="padding:12px; display:flex; flex-direction:column; height:220px;">
+                <div class="row-flex mono" style="font-size:11px; margin-bottom:6px;">
+                  <strong id="squareMultTitle" class="text-purp">SQUARE &amp; MULTIPLY</strong>
+                  <span id="modBinText" class="text-muted">1101₂</span>
+                </div>
+                <div id="modTraceBox" class="mono" style="font-size:11px; overflow-y:auto; flex:1; line-height:1.55;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface-panel pane col-stack">
+            <strong id="rsaHeading" class="text-purp" style="font-size:14px;">🔑 Live RSA Keygen &amp; Encryption Sandbox</strong>
+
+            <div class="grid-3" style="align-items:end;">
+              <div>
+                <label for="rsaP" class="mono text-muted lbl-prime" style="font-size:11px; display:block; margin-bottom:4px;">Prime p:</label>
+                <select id="rsaP" class="cyber-select mono">
+                  <option value="11" selected>p = 11</option>
+                  <option value="13">p = 13</option>
+                  <option value="17">p = 17</option>
+                  <option value="19">p = 19</option>
+                  <option value="23">p = 23</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="rsaQ" class="mono text-muted lbl-prime" style="font-size:11px; display:block; margin-bottom:4px;">Prime q:</label>
+                <select id="rsaQ" class="cyber-select mono">
+                  <option value="13">q = 13</option>
+                  <option value="17" selected>q = 17</option>
+                  <option value="19">q = 19</option>
+                  <option value="23">q = 23</option>
+                  <option value="29">q = 29</option>
+                </select>
+              </div>
+
+              <div class="card-box control-box">
+                <div class="control-top mono">
+                  <label for="rsaMsg"><span class="lbl-msg">Msg</span> M:</label>
+                  <span id="rsaMsgVal" class="text-mag" style="font-weight:700;">42</span>
+                </div>
+                <input id="rsaMsg" type="range" min="2" max="150" step="1" value="42" />
+              </div>
+            </div>
+
+            <div class="grid-4 mono">
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:10px;">N = p · q</div>
+                <div id="rsaNVal" style="font-size:16px; font-weight:800; margin-top:2px;">187</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:10px;">φ(N)</div>
+                <div id="rsaPhiVal" class="text-purp" style="font-size:16px; font-weight:800; margin-top:2px;">160</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:10px;"><span id="pubKeyLabel">Public</span> (e, N)</div>
+                <div id="rsaPubVal" class="text-ok" style="font-size:14px; font-weight:800; margin-top:3px;">(3, 187)</div>
+              </div>
+              <div class="card-box" style="padding:10px 12px;">
+                <div class="text-muted" style="font-size:10px;"><span id="privKeyLabel">Private</span> (d, N)</div>
+                <div id="rsaPrivVal" class="text-mag" style="font-size:14px; font-weight:800; margin-top:3px;">(107, 187)</div>
+              </div>
+            </div>
+
+            <div class="grid-2 mono">
+              <div class="card-box" style="padding:14px; border-color: rgba(255, 0, 127, 0.4);">
+                <div class="text-muted" style="font-size:11px; margin-bottom:4px;"><span id="encryptLabel">Encrypt</span> C = M^e mod N</div>
+                <div id="rsaCipherVal" class="text-mag" style="font-size:16px; font-weight:800;">C = 123</div>
+              </div>
+              <div class="card-box" style="padding:14px; border-color: rgba(16, 185, 129, 0.4);">
+                <div class="text-muted" style="font-size:11px; margin-bottom:4px;"><span id="decryptLabel">Decrypt</span> M' = C^d mod N</div>
+                <div id="rsaDecryptVal" class="text-ok" style="font-size:16px; font-weight:800;">M' = 42 (Verified)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- 4. GRAPH THEORY & PATHFINDING VISUALIZER                            -->
+      <!-- =================================================================== -->
+      <section id="panel-graphs" class="module-panel">
+        <div class="surface-panel banner-bar">
+          <div class="banner-left">
+            <span id="graphsTag" class="tag-pill purple mono">04 // GRAPH THEORY</span>
+            <h2 id="graphsTitle" class="section-title">Graph Traversal &amp; Shortest-Path Visualizer</h2>
+            <p id="graphsDesc" class="section-desc">Drag nodes; Click to set Target; Shift+Click to set Source.</p>
+          </div>
+          <span class="formula-note mono"><span id="relaxLabel">Relaxation</span>: d[v] ← min(d[v], d[u] + w(u, v))</span>
+        </div>
+
+        <div class="split-grid graph-split">
+          <div class="surface-panel pane col-stack">
+            <div class="row-flex">
+              <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+                <select id="graphAlgoSelect" class="cyber-select compact mono" aria-label="Algorithm">
+                  <option value="dijkstra" id="algoDijkstra">Dijkstra's Algorithm</option>
+                  <option value="bfs" id="algoBfs">Breadth-First Search (BFS)</option>
+                  <option value="dfs" id="algoDfs">Depth-First Search (DFS)</option>
+                </select>
+
+                <button id="graphStepBtn" type="button" class="btn-action btn-purple">
+                  <span>⏭ <span id="stepBtnText">Step</span></span>
+                </button>
+
+                <button id="graphPlayBtn" type="button" class="btn-action btn-primary">
+                  <span>▶ <span id="graphPlayLabel">Auto-Play</span></span>
+                </button>
+
+                <button id="graphResetBtn" type="button" class="btn-action mono reset-btn-text">Reset</button>
+              </div>
+
+              <div class="mono" style="display:flex; align-items:center; gap:8px; font-size:12px;">
+                <label for="graphSpeed" class="text-muted"><span id="speedLabel">Speed</span>:</label>
+                <input id="graphSpeed" type="range" min="150" max="1000" step="50" value="550" style="width:85px;" />
+                <button id="graphRandomBtn" type="button" class="btn-action" style="color:var(--magenta); border-color:rgba(255,0,127,0.4);">
+                  🔀 <span id="weightsBtnText">Weights</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="canvas-box" style="height:310px;">
+              <canvas id="graphCanvas" style="cursor:grab;"></canvas>
+            </div>
+
+            <div class="mono text-muted" style="display:flex; flex-wrap:wrap; gap:16px; font-size:11px;">
+              <span>🟢 <span id="legendSource">Source</span></span>
+              <span>🔴 <span id="legendTarget">Target</span></span>
+              <span>💗 <span id="legendActive">Active</span></span>
+              <span>🟣 <span id="legendVisited">Visited</span></span>
+            </div>
+          </div>
+
+          <div class="surface-panel pane col-stack">
+            <strong id="graphInspectorHeading" class="text-purp" style="font-size:14px;">📋 Algorithm State Inspector</strong>
+
+            <div id="graphStatusText" class="card-box mono" style="padding:10px 12px; font-size:12px; line-height:1.5;"></div>
+
+            <div>
+              <div id="frontierHeading" class="mono text-muted" style="font-size:11px; text-transform:uppercase; margin-bottom:6px;">
+                Frontier Queue / Priority Set
+              </div>
+              <div id="graphFrontierBox" class="card-box mono" style="padding:10px; min-height:40px; display:flex; flex-wrap:wrap; gap:6px; font-size:12px;"></div>
+            </div>
+
+            <div style="overflow-x:auto;">
+              <table class="data-table mono">
+                <thead>
+                  <tr>
+                    <th id="colVertex">Vertex</th>
+                    <th><span id="colDist">Dist</span> d[v]</th>
+                    <th><span id="colParent">Parent</span> π[v]</th>
+                    <th id="colState">State</th>
+                  </tr>
+                </thead>
+                <tbody id="graphTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- 5. CS MATH CHALLENGE ARENA                                          -->
+      <!-- =================================================================== -->
+      <section id="panel-quiz" class="module-panel">
+        <div class="surface-panel banner-bar">
+          <div class="banner-left">
+            <span id="quizTag" class="tag-pill mono">05 // CHALLENGE ARENA</span>
+            <h2 id="quizTitle" class="section-title">University CS Mathematics Challenge</h2>
+          </div>
+
+          <div class="mono" style="display:flex; align-items:center; gap:10px;">
+            <div class="card-box" style="padding:6px 12px; display:flex; align-items:center; gap:8px;">
+              <span id="scoreLabel" class="text-muted" style="font-size:10px;">SCORE</span>
+              <span id="quizScoreVal" class="text-mag" style="font-size:14px; font-weight:900;">0 / 0</span>
+            </div>
+            <div class="card-box" style="padding:6px 12px; display:flex; align-items:center; gap:8px;">
+              <span id="streakLabel" class="text-muted" style="font-size:10px;">STREAK</span>
+              <span id="quizStreakVal" class="text-purp" style="font-size:14px; font-weight:900;">0 🔥</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="split-grid graph-split" style="align-items:stretch;">
+          <div class="surface-panel pane col-stack" style="justify-content:space-between;">
+            <div class="col-stack">
+              <div class="row-flex mono" style="font-size:12px;">
+                <span id="quizTopicBadge" class="tag-pill purple">Asymptotic Analysis</span>
+                <span id="quizCounterText" class="text-muted">Question 1 of 6</span>
+              </div>
+
+              <h3 id="quizQuestionText" style="margin:0; font-size:17px; font-weight:700; line-height:1.4;">Loading...</h3>
+
+              <div id="quizOptionsGrid" class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));"></div>
+            </div>
+
+            <div class="row-flex" style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border-subtle);">
+              <button id="quizRestartBtn" type="button" class="btn-action mono">Restart Arena</button>
+              <button id="quizNextBtn" type="button" class="btn-action btn-primary" disabled>
+                <span id="nextChallengeBtnText">Next Challenge</span> →
+              </button>
+            </div>
+          </div>
+
+          <div class="surface-panel pane" style="display:flex; flex-direction:column; justify-content:center;">
+            <div id="quizFeedbackBox" class="card-box" style="display:none; padding:16px;">
+              <div id="quizFeedbackTitle" class="mono" style="font-weight:700; margin-bottom:6px;"></div>
+              <p id="quizFeedbackBody" style="margin:0; font-size:13px; line-height:1.55;"></p>
+            </div>
+
+            <div id="quizPlaceholderBox" class="card-box" style="padding:20px; text-align:center; border-style:dashed;">
+              <div style="font-size:24px; margin-bottom:6px;">💡</div>
+              <div id="proofPlaceholderTitle" class="mono text-purp" style="font-size:12px; font-weight:700; margin-bottom:4px;">
+                FORMAL PROOF &amp; EXPLANATION
+              </div>
+              <p id="proofPlaceholderDesc" class="section-desc">
+                Select an answer option on the left to inspect the mathematical proof and algorithmic reasoning.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container-wide row-flex mono">
+      <span id="footerLeft">CS MATH LAB // Asymptotics • Linear Algebra • Cryptography • Graph Theory</span>
+      <span id="footerRight" class="text-mag">University Computer Science Interactive Tutorial</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ------------------------------------------------------------------- */
+      /* 1. MULTI-LANGUAGE DICTIONARY (EN / PL / TR / DE)                    */
+      /* ------------------------------------------------------------------- */
+      const i18n = {
+        en: {
+          htmlLang: 'en',
+          brandTitle: 'CS MATH LAB',
+          brandBadge: 'CS-301 // WIDE LAB',
+          brandSubtitle: 'University Computer Science Mathematics & Algorithmic Foundations',
+          navBigo: '1. Big-O Lab',
+          navLinear: '2. Linear Algebra',
+          navDiscrete: '3. Discrete & RSA',
+          navGraphs: '4. Graph Paths',
+          navQuiz: '5. Challenge Arena',
+          themeDark: 'Dark Neon',
+          themeAmoled: 'AMOLED Black',
+          themeLight: 'Cyber-Light',
+          resetBtn: 'Reset',
+          bigoTag: '01 // COMPLEXITY',
+          bigoTitle: 'Asymptotic Growth Rates & Formal Big-O Witnesses',
+          bigoDesc: 'Verify f(n) = 2n + 4 ≤ c · n² across shaded witness region n ≥ n₀.',
+          bigoParamsHeading: '🎛 Witness & Growth Parameters',
+          maxLabel: 'Max',
+          constLabel: 'Const',
+          threshLabel: 'Thresh',
+          activeCurvesLabel: 'Active Complexity Curves',
+          upperBoundTitle: 'UPPER-BOUND PROOF',
+          validBoundBadge: 'VALID BOUND',
+          invalidBoundBadge: 'INCREASE c OR n₀',
+          testingBoundPrefix: 'Testing',
+          withConst: 'with',
+          forAllN: 'for all',
+          holdsSuffix: 'Holds ∀ n ≥',
+          violatedSuffix: 'Bound violated at n₀',
+          bigoChartTitle: 'ASYMPTOTIC GROWTH VISUALIZER (OPERATIONS vs. INPUT SIZE n)',
+          bigoShadedLegend: 'Shaded Region = Witness Domain (n ≥ n₀)',
+          opsCountAt: 'Operation Count at',
+          opsSuffix: 'ops',
+          overflowText: 'Overflow',
+          linearTag: '02 // LINEAR ALGEBRA',
+          linearTitle: '2D Linear Transformations, Eigenvectors & Determinant Area',
+          linearDesc: 'Basis vectors î ↦ [a, c]ᵀ, ĵ ↦ [b, d]ᵀ scale unit area by |det(M)|.',
+          eigenspacesLabel: 'Eigenspaces',
+          presetsHeading: 'Canonical Transformation Presets',
+          presetIdentity: 'Identity (I)',
+          presetRotate: 'Rotate 45°',
+          presetShear: 'Shear (k=1)',
+          presetScale: 'Scale (1.5, 0.5)',
+          presetReflect: 'Reflect (y=x)',
+          presetSingular: 'Singular (det=0)',
+          col1: 'Col 1',
+          col2: 'Col 2',
+          areaScalePrefix: 'Area Scale:',
+          collapsedSpace: 'Collapsed Space (det = 0)',
+          flippedSpace: 'Orientation Flipped (det < 0)',
+          detLabel: 'Determinant',
+          traceLabel: 'Trace',
+          rankLabel: 'Matrix Rank',
+          rankFull: '2 (Full)',
+          rankSingular: '1 (Singular)',
+          rankZero: '0 (Zero)',
+          eigenLabel: 'Eigenvalues',
+          discreteTag: '03 // DISCRETE & CRYPTO',
+          discreteTitle: 'Modular Exponentiation (O(log b)) & RSA Cryptosystem Lab',
+          modExpHeading: '🔁 Modular Exponentiation (a^b mod m)',
+          baseLabel: 'Base',
+          expLabel: 'Exp',
+          modLabel: 'Mod',
+          squareMultTitle: 'SQUARE & MULTIPLY',
+          rsaHeading: '🔑 Live RSA Keygen & Encryption Sandbox',
+          primeLabel: 'Prime',
+          msgLabel: 'Msg',
+          pubKeyLabel: 'Public',
+          privKeyLabel: 'Private',
+          encryptLabel: 'Encrypt',
+          decryptLabel: 'Decrypt',
+          verifiedTag: 'Verified',
+          graphsTag: '04 // GRAPH THEORY',
+          graphsTitle: 'Graph Traversal & Shortest-Path Visualizer',
+          graphsDesc: 'Drag nodes; Click to set Target; Shift+Click to set Source.',
+          relaxLabel: 'Relaxation',
+          algoDijkstra: "Dijkstra's Algorithm",
+          algoBfs: 'Breadth-First Search (BFS)',
+          algoDfs: 'Depth-First Search (DFS)',
+          stepBtn: 'Step',
+          autoPlayBtn: 'Auto-Play',
+          pauseBtn: 'Pause',
+          speedLabel: 'Speed',
+          weightsBtn: 'Weights',
+          legendSource: 'Source',
+          legendTarget: 'Target',
+          legendActive: 'Active',
+          legendVisited: 'Visited',
+          graphInspectorHeading: '📋 Algorithm State Inspector',
+          graphReadyStatus: (algo, s, t) => `Ready: <strong>${algo.toUpperCase()}</strong> initialized at source <strong>${s}</strong> → target <strong>${t}</strong>.`,
+          graphExpandedStatus: (u, d, cnt) => `Expanded node <strong>${u}</strong> (dist = ${d}). Relaxed ${cnt} incident edges.`,
+          graphReachedStatus: (t, d) => `<span class="text-mag" style="font-weight:700;">Target ${t} Reached!</span> Total path cost: <strong>${d}</strong>.`,
+          graphDoneStatus: (t, d) => `<span class="text-ok" style="font-weight:700;">Traversal Complete!</span> Shortest distance to ${t}: <strong>${d === Infinity ? '∞' : d}</strong>.`,
+          frontierHeading: 'Frontier Queue / Priority Set',
+          frontierEmpty: 'Empty',
+          colVertex: 'Vertex',
+          colDist: 'Dist',
+          colParent: 'Parent',
+          colState: 'State',
+          stateActive: 'Active',
+          stateVisited: 'Visited',
+          stateUnseen: 'Unseen',
+          quizTag: '05 // CHALLENGE ARENA',
+          quizTitle: 'University CS Mathematics Challenge',
+          scoreLabel: 'SCORE',
+          streakLabel: 'STREAK',
+          questionCounter: (idx, total) => `Question ${idx} of ${total}`,
+          restartArenaBtn: 'Restart Arena',
+          nextChallengeBtn: 'Next Challenge',
+          proofPlaceholderTitle: 'FORMAL PROOF & EXPLANATION',
+          proofPlaceholderDesc: 'Select an answer option on the left to inspect the mathematical proof and algorithmic reasoning.',
+          correctProofTitle: '✓ Correct Proof!',
+          wrongProofTitle: '✕ Counterexample Found',
+          footerLeft: 'CS MATH LAB // Asymptotics • Linear Algebra • Cryptography • Graph Theory',
+          footerRight: 'University Computer Science Interactive Tutorial'
+        },
+        pl: {
+          htmlLang: 'pl',
+          brandTitle: 'CS MATH LAB',
+          brandBadge: 'CS-301 // SZEROKIE LAB',
+          brandSubtitle: 'Matematyka dla Informatyki i Podstawy Algorytmów',
+          navBigo: '1. Analiza Big-O',
+          navLinear: '2. Algebra Liniowa',
+          navDiscrete: '3. Dyskretna i RSA',
+          navGraphs: '4. Grafy i Ścieżki',
+          navQuiz: '5. Arena Wyzwań',
+          themeDark: 'Ciemny Neon',
+          themeAmoled: 'Czerń AMOLED',
+          themeLight: 'Jasny Cyber',
+          resetBtn: 'Resetuj',
+          bigoTag: '01 // ZŁOŻONOŚĆ',
+          bigoTitle: 'Wzrost Asymptotyczny i Świadkowie Notacji Big-O',
+          bigoDesc: 'Sprawdź f(n) = 2n + 4 ≤ c · n² w zacienionym obszarze n ≥ n₀.',
+          bigoParamsHeading: '🎛 Parametry Świadka i Wzrostu',
+          maxLabel: 'Maks',
+          constLabel: 'Stała',
+          threshLabel: 'Próg',
+          activeCurvesLabel: 'Aktywne Krzywe Złożoności',
+          upperBoundTitle: 'DOWÓD OGRANICZENIA GÓRNEGO',
+          validBoundBadge: 'POPRAWNE OGRANICZENIE',
+          invalidBoundBadge: 'ZWIĘKSZ c LUB n₀',
+          testingBoundPrefix: 'Test',
+          withConst: 'dla',
+          forAllN: 'dla każdego',
+          holdsSuffix: 'Spełnione ∀ n ≥',
+          violatedSuffix: 'Naruszenie dla n₀',
+          bigoChartTitle: 'WIZUALIZATOR WZROSTU (OPERACJE vs. ROZMIAR WEJŚCIA n)',
+          bigoShadedLegend: 'Obszar zacieniony = Dziedzina świadka (n ≥ n₀)',
+          opsCountAt: 'Liczba operacji dla',
+          opsSuffix: 'op.',
+          overflowText: 'Przepełnienie',
+          linearTag: '02 // ALGEBRA LINIOWA',
+          linearTitle: 'Przekształcenia 2D, Wektory Własne i Wyznacznik',
+          linearDesc: 'Wektory bazowe î ↦ [a, c]ᵀ, ĵ ↦ [b, d]ᵀ skalują pole o |det(M)|.',
+          eigenspacesLabel: 'Podprzestrzenie własne',
+          presetsHeading: 'Gotowe Przekształcenia Kanoniczne',
+          presetIdentity: 'Tożsamość (I)',
+          presetRotate: 'Obrót 45°',
+          presetShear: 'Pochylenie (k=1)',
+          presetScale: 'Skala (1.5, 0.5)',
+          presetReflect: 'Odbicie (y=x)',
+          presetSingular: 'Osobliwa (det=0)',
+          col1: 'Kol. 1',
+          col2: 'Kol. 2',
+          areaScalePrefix: 'Skala pola:',
+          collapsedSpace: 'Zgnieciona przestrzeń (det = 0)',
+          flippedSpace: 'Odwrócona orientacja (det < 0)',
+          detLabel: 'Wyznacznik',
+          traceLabel: 'Ślad',
+          rankLabel: 'Rząd macierzy',
+          rankFull: '2 (Pełny)',
+          rankSingular: '1 (Osobliwy)',
+          rankZero: '0 (Zerowy)',
+          eigenLabel: 'Wartości własne',
+          discreteTag: '03 // DYSKRETNA I KRYPTO',
+          discreteTitle: 'Potęgowanie Modularne (O(log b)) i Kryptosystem RSA',
+          modExpHeading: '🔁 Potęgowanie Modularne (a^b mod m)',
+          baseLabel: 'Podst.',
+          expLabel: 'Wykł.',
+          modLabel: 'Mod',
+          squareMultTitle: 'PODNOSZENIE DO KWADRATU I MNOŻENIE',
+          rsaHeading: '🔑 Generator Kluczy i Szyfrowanie RSA na Żywo',
+          primeLabel: 'Liczba pierwsza',
+          msgLabel: 'Wiad.',
+          pubKeyLabel: 'Klucz publ.',
+          privKeyLabel: 'Klucz pryw.',
+          encryptLabel: 'Szyfruj',
+          decryptLabel: 'Deszyfruj',
+          verifiedTag: 'Zweryfikowano',
+          graphsTag: '04 // TEORIA GRAFÓW',
+          graphsTitle: 'Przeszukiwanie Grafów i Najkrótsze Ścieżki',
+          graphsDesc: 'Przeciągaj węzły; Kliknij = Cel; Shift+Klik = Źródło.',
+          relaxLabel: 'Relaksacja',
+          algoDijkstra: 'Algorytm Dijkstry',
+          algoBfs: 'Przeszukiwanie wszerz (BFS)',
+          algoDfs: 'Przeszukiwanie w głąb (DFS)',
+          stepBtn: 'Krok',
+          autoPlayBtn: 'Auto-Odtwarzanie',
+          pauseBtn: 'Pauza',
+          speedLabel: 'Tempo',
+          weightsBtn: 'Wagi',
+          legendSource: 'Źródło',
+          legendTarget: 'Cel',
+          legendActive: 'Aktywny',
+          legendVisited: 'Odwiedzony',
+          graphInspectorHeading: '📋 Inspektor Stanu Algorytmu',
+          graphReadyStatus: (algo, s, t) => `Gotowe: <strong>${algo.toUpperCase()}</strong> zainicjowany ze źródła <strong>${s}</strong> → cel <strong>${t}</strong>.`,
+          graphExpandedStatus: (u, d, cnt) => `Rozwinięto węzeł <strong>${u}</strong> (odl. = ${d}). Zrelaksowano ${cnt} krawędzi.`,
+          graphReachedStatus: (t, d) => `<span class="text-mag" style="font-weight:700;">Osiągnięto cel ${t}!</span> Koszt ścieżki: <strong>${d}</strong>.`,
+          graphDoneStatus: (t, d) => `<span class="text-ok" style="font-weight:700;">Przeszukiwanie zakończone!</span> Najkrótsza odległość do ${t}: <strong>${d === Infinity ? '∞' : d}</strong>.`,
+          frontierHeading: 'Kolejka Brzegowa / Zbiór Priorytetowy',
+          frontierEmpty: 'Pusta',
+          colVertex: 'Wierzchołek',
+          colDist: 'Odl.',
+          colParent: 'Poprzednik',
+          colState: 'Stan',
+          stateActive: 'Aktywny',
+          stateVisited: 'Odwiedzony',
+          stateUnseen: 'Nowy',
+          quizTag: '05 // ARENA WYZWAŃ',
+          quizTitle: 'Uniwersyteckie Wyzwanie z Matematyki CS',
+          scoreLabel: 'WYNIK',
+          streakLabel: 'SERIA',
+          questionCounter: (idx, total) => `Pytanie ${idx} z ${total}`,
+          restartArenaBtn: 'Restartuj Arenę',
+          nextChallengeBtn: 'Następne Pytanie',
+          proofPlaceholderTitle: 'DOWÓD FORMALNY I WYJAŚNIENIE',
+          proofPlaceholderDesc: 'Wybierz odpowiedź po lewej stronie, aby zobaczyć dowód matematyczny i uzasadnienie algorytmiczne.',
+          correctProofTitle: '✓ Poprawny Dowód!',
+          wrongProofTitle: '✕ Znaleziono Kontrprzykład',
+          footerLeft: 'CS MATH LAB // Asymptotyka • Algebra Liniowa • Kryptografia • Teoria Grafów',
+          footerRight: 'Interaktywny Samouczek Matematyki dla Informatyki'
+        },
+        tr: {
+          htmlLang: 'tr',
+          brandTitle: 'CS MATH LAB',
+          brandBadge: 'CS-301 // GENİŞ LAB',
+          brandSubtitle: 'Üniversite Bilgisayar Bilimleri Matematiği ve Algoritmalar',
+          navBigo: '1. Big-O Laboratuvarı',
+          navLinear: '2. Lineer Cebir',
+          navDiscrete: '3. Ayrık ve RSA',
+          navGraphs: '4. Grafik Yolları',
+          navQuiz: '5. Yarışma Arenası',
+          themeDark: 'Koyu Neon',
+          themeAmoled: 'AMOLED Siyah',
+          themeLight: 'Açık Siber',
+          resetBtn: 'Sıfırla',
+          bigoTag: '01 // KARMAŞIKLIK',
+          bigoTitle: 'Asimptotik Büyüme Hızları ve Resmi Big-O Tanıkları',
+          bigoDesc: 'Gölgeli tanık bölgesinde (n ≥ n₀) f(n) = 2n + 4 ≤ c · n² koşulunu doğrulayın.',
+          bigoParamsHeading: '🎛 Tanık ve Büyüme Parametreleri',
+          maxLabel: 'Maks',
+          constLabel: 'Sabit',
+          threshLabel: 'Eşik',
+          activeCurvesLabel: 'Aktif Karmaşıklık Eğrileri',
+          upperBoundTitle: 'ÜST SINIR İSPATI',
+          validBoundBadge: 'GEÇERLİ SINIR',
+          invalidBoundBadge: 'c VEYA n₀ ARTIRIN',
+          testingBoundPrefix: 'Test',
+          withConst: 'için',
+          forAllN: 'tüm',
+          holdsSuffix: 'Sağlanıyor ∀ n ≥',
+          violatedSuffix: 'n₀ noktasında bozuldu',
+          bigoChartTitle: 'ASİMPTOTİK BÜYÜME GÖRSELLEYİCİSİ (İŞLEM vs. GİRDİ BOYUTU n)',
+          bigoShadedLegend: 'Gölgeli Bölge = Tanık Uzayı (n ≥ n₀)',
+          opsCountAt: 'İşlem sayısı (n =',
+          opsSuffix: 'işlem',
+          overflowText: 'Taşma',
+          linearTag: '02 // LİNEER CEBİR',
+          linearTitle: '2B Lineer Dönüşümler, Özvektörler ve Determinant Alanı',
+          linearDesc: 'Baz vektörleri î ↦ [a, c]ᵀ, ĵ ↦ [b, d]ᵀ birim alanı |det(M)| kadar ölçekler.',
+          eigenspacesLabel: 'Özuzaylar',
+          presetsHeading: 'Hazır Dönüşüm Ön Ayarları',
+          presetIdentity: 'Birim (I)',
+          presetRotate: '45° Döndür',
+          presetShear: 'Kayma (k=1)',
+          presetScale: 'Ölçek (1.5, 0.5)',
+          presetReflect: 'Yansıma (y=x)',
+          presetSingular: 'Tekil (det=0)',
+          col1: 'Sütun 1',
+          col2: 'Sütun 2',
+          areaScalePrefix: 'Alan Ölçeği:',
+          collapsedSpace: 'Çökmüş Uzay (det = 0)',
+          flippedSpace: 'Yön Tersi (det < 0)',
+          detLabel: 'Determinant',
+          traceLabel: 'İz (Trace)',
+          rankLabel: 'Matris Rankı',
+          rankFull: '2 (Tam)',
+          rankSingular: '1 (Tekil)',
+          rankZero: '0 (Sıfır)',
+          eigenLabel: 'Özdeğerler',
+          discreteTag: '03 // AYRIK VE KRİPTO',
+          discreteTitle: 'Modüler Üs Alma (O(log b)) ve RSA Kriptosistemi',
+          modExpHeading: '🔁 Modüler Üs Alma (a^b mod m)',
+          baseLabel: 'Taban',
+          expLabel: 'Üs',
+          modLabel: 'Mod',
+          squareMultTitle: 'KARE AL VE ÇARP',
+          rsaHeading: '🔑 Canlı RSA Anahtar Üretimi ve Şifreleme',
+          primeLabel: 'Asal',
+          msgLabel: 'Mesaj',
+          pubKeyLabel: 'Açık Anahtar',
+          privKeyLabel: 'Gizli Anahtar',
+          encryptLabel: 'Şifrele',
+          decryptLabel: 'Çöz',
+          verifiedTag: 'Doğrulandı',
+          graphsTag: '04 // GRAFİK TEORİSİ',
+          graphsTitle: 'Grafik Gezinme ve En Kısa Yol Görselleştirici',
+          graphsDesc: 'Düğümleri sürükleyin; Hedef için tıklayın; Kaynak için Shift+Tıklayın.',
+          relaxLabel: 'Gevşetme',
+          algoDijkstra: 'Dijkstra Algoritması',
+          algoBfs: 'Genişlik Öncelikli Arama (BFS)',
+          algoDfs: 'Derinlik Öncelikli Arama (DFS)',
+          stepBtn: 'Adım',
+          autoPlayBtn: 'Otomatik',
+          pauseBtn: 'Duraklat',
+          speedLabel: 'Hız',
+          weightsBtn: 'Ağırlıklar',
+          legendSource: 'Kaynak',
+          legendTarget: 'Hedef',
+          legendActive: 'Aktif',
+          legendVisited: 'Ziyaret Edildi',
+          graphInspectorHeading: '📋 Algoritma Durum İnceleyici',
+          graphReadyStatus: (algo, s, t) => `Hazır: <strong>${algo.toUpperCase()}</strong> kaynağı <strong>${s}</strong> → hedef <strong>${t}</strong> olarak ayarlandı.`,
+          graphExpandedStatus: (u, d, cnt) => `<strong>${u}</strong> düğümü açıldı (mesafe = ${d}). ${cnt} komşu kenar incelendi.`,
+          graphReachedStatus: (t, d) => `<span class="text-mag" style="font-weight:700;">${t} Hedefine Ulaşıldı!</span> Toplam maliyet: <strong>${d}</strong>.`,
+          graphDoneStatus: (t, d) => `<span class="text-ok" style="font-weight:700;">Arama Tamamlandı!</span> ${t} mesafesi: <strong>${d === Infinity ? '∞' : d}</strong>.`,
+          frontierHeading: 'Sınır Kuyruğu / Öncelik Kümesi',
+          frontierEmpty: 'Boş',
+          colVertex: 'Düğüm',
+          colDist: 'Mesafe',
+          colParent: 'Önceki',
+          colState: 'Durum',
+          stateActive: 'Aktif',
+          stateVisited: 'Gezildi',
+          stateUnseen: 'Yeni',
+          quizTag: '05 // YARIŞMA ARENASI',
+          quizTitle: 'Üniversite CS Matematik Yarışması',
+          scoreLabel: 'PUAN',
+          streakLabel: 'SERİ',
+          questionCounter: (idx, total) => `Soru ${idx} / ${total}`,
+          restartArenaBtn: 'Arenayı Sıfırla',
+          nextChallengeBtn: 'Sonraki Soru',
+          proofPlaceholderTitle: 'RESMİ İSPAT VE AÇIKLAMA',
+          proofPlaceholderDesc: 'Matematiksel ispatı ve algoritmik gerekçeyi görmek için soldan bir seçenek seçin.',
+          correctProofTitle: '✓ Doğru İspat!',
+          wrongProofTitle: '✕ Karşı Örnek Bulundu',
+          footerLeft: 'CS MATH LAB // Asimptotik • Lineer Cebir • Kriptografi • Grafik Teorisi',
+          footerRight: 'Üniversite Bilgisayar Bilimleri İnteraktif Rehberi'
+        },
+        de: {
+          htmlLang: 'de',
+          brandTitle: 'CS MATH LAB',
+          brandBadge: 'CS-301 // WEIT-LAB',
+          brandSubtitle: 'Informatik-Mathematik & Algorithmische Grundlagen',
+          navBigo: '1. Big-O-Labor',
+          navLinear: '2. Lineare Algebra',
+          navDiscrete: '3. Diskret & RSA',
+          navGraphs: '4. Graphenpfade',
+          navQuiz: '5. Challenge-Arena',
+          themeDark: 'Dunkel-Neon',
+          themeAmoled: 'AMOLED-Schwarz',
+          themeLight: 'Hell-Cyber',
+          resetBtn: 'Zurücksetzen',
+          bigoTag: '01 // KOMPLEXITÄT',
+          bigoTitle: 'Asymptotisches Wachstum & Formale Big-O-Zeugen',
+          bigoDesc: 'Prüfe f(n) = 2n + 4 ≤ c · n² im schattierten Zeugenbereich n ≥ n₀.',
+          bigoParamsHeading: '🎛 Zeugen- & Wachstumsparameter',
+          maxLabel: 'Max',
+          constLabel: 'Konst.',
+          threshLabel: 'Schwelle',
+          activeCurvesLabel: 'Aktive Komplexitätskurven',
+          upperBoundTitle: 'BEWEIS DER OBEREN SCHRANKE',
+          validBoundBadge: 'GÜLTIGE SCHRANKE',
+          invalidBoundBadge: 'c ODER n₀ ERHÖHEN',
+          testingBoundPrefix: 'Test',
+          withConst: 'mit',
+          forAllN: 'für alle',
+          holdsSuffix: 'Gilt ∀ n ≥',
+          violatedSuffix: 'Schranke verletzt bei n₀',
+          bigoChartTitle: 'WACHSTUMSVISUALISIERUNG (OPERATIONEN vs. EINGABEGRÖSSE n)',
+          bigoShadedLegend: 'Schattierter Bereich = Zeugenbereich (n ≥ n₀)',
+          opsCountAt: 'Operationsanzahl bei',
+          opsSuffix: 'Op.',
+          overflowText: 'Überlauf',
+          linearTag: '02 // LINEARE ALGEBRA',
+          linearTitle: '2D-Lineare Abbildungen, Eigenvektoren & Determinantenfläche',
+          linearDesc: 'Basisvektoren î ↦ [a, c]ᵀ, ĵ ↦ [b, d]ᵀ skalieren die Fläche um |det(M)|.',
+          eigenspacesLabel: 'Eigenräume',
+          presetsHeading: 'Kanonische Transformations-Vorgaben',
+          presetIdentity: 'Identität (I)',
+          presetRotate: 'Drehung 45°',
+          presetShear: 'Scherung (k=1)',
+          presetScale: 'Skalierung (1.5, 0.5)',
+          presetReflect: 'Spiegelung (y=x)',
+          presetSingular: 'Singulär (det=0)',
+          col1: 'Spalte 1',
+          col2: 'Spalte 2',
+          areaScalePrefix: 'Flächenskalierung:',
+          collapsedSpace: 'Kollabierter Raum (det = 0)',
+          flippedSpace: 'Orientierung gekippt (det < 0)',
+          detLabel: 'Determinante',
+          traceLabel: 'Spur',
+          rankLabel: 'Matrixrang',
+          rankFull: '2 (Voll)',
+          rankSingular: '1 (Singulär)',
+          rankZero: '0 (Null)',
+          eigenLabel: 'Eigenwerte',
+          discreteTag: '03 // DISKRET & KRYPTO',
+          discreteTitle: 'Modulare Potenzierung (O(log b)) & RSA-Kryptosystem',
+          modExpHeading: '🔁 Modulare Potenzierung (a^b mod m)',
+          baseLabel: 'Basis',
+          expLabel: 'Exp.',
+          modLabel: 'Mod',
+          squareMultTitle: 'QUADRAT & MULTIPLIKATION',
+          rsaHeading: '🔑 Live-RSA-Schlüssel & Verschlüsselung',
+          primeLabel: 'Primzahl',
+          msgLabel: 'Nachr.',
+          pubKeyLabel: 'Öffentl.',
+          privKeyLabel: 'Privat',
+          encryptLabel: 'Verschlüsseln',
+          decryptLabel: 'Entschlüsseln',
+          verifiedTag: 'Verifiziert',
+          graphsTag: '04 // GRAPHENTHEORIE',
+          graphsTitle: 'Graphdurchlauf & Kürzeste-Wege-Visualizer',
+          graphsDesc: 'Knoten ziehen; Klick = Ziel; Umschalt+Klick = Start.',
+          relaxLabel: 'Relaxation',
+          algoDijkstra: 'Dijkstra-Algorithmus',
+          algoBfs: 'Breitensuche (BFS)',
+          algoDfs: 'Tiefensuche (DFS)',
+          stepBtn: 'Schritt',
+          autoPlayBtn: 'Auto-Start',
+          pauseBtn: 'Pause',
+          speedLabel: 'Tempo',
+          weightsBtn: 'Gewichte',
+          legendSource: 'Start',
+          legendTarget: 'Ziel',
+          legendActive: 'Aktiv',
+          legendVisited: 'Besucht',
+          graphInspectorHeading: '📋 Algorithmus-Zustandsinspektor',
+          graphReadyStatus: (algo, s, t) => `Bereit: <strong>${algo.toUpperCase()}</strong> gestartet bei <strong>${s}</strong> → Ziel <strong>${t}</strong>.`,
+          graphExpandedStatus: (u, d, cnt) => `Knoten <strong>${u}</strong> erweitert (Dist. = ${d}). ${cnt} Kanten geprüft.`,
+          graphReachedStatus: (t, d) => `<span class="text-mag" style="font-weight:700;">Ziel ${t} erreicht!</span> Gesamtkosten: <strong>${d}</strong>.`,
+          graphDoneStatus: (t, d) => `<span class="text-ok" style="font-weight:700;">Suche abgeschlossen!</span> Kürzeste Distanz zu ${t}: <strong>${d === Infinity ? '∞' : d}</strong>.`,
+          frontierHeading: 'Randwarteschlange / Prioritätsmenge',
+          frontierEmpty: 'Leer',
+          colVertex: 'Knoten',
+          colDist: 'Dist.',
+          colParent: 'Vorgänger',
+          colState: 'Status',
+          stateActive: 'Aktiv',
+          stateVisited: 'Besucht',
+          stateUnseen: 'Offen',
+          quizTag: '05 // CHALLENGE-ARENA',
+          quizTitle: 'Uni-Informatik-Mathematik-Challenge',
+          scoreLabel: 'PUNKTE',
+          streakLabel: 'SERIE',
+          questionCounter: (idx, total) => `Frage ${idx} von ${total}`,
+          restartArenaBtn: 'Arena Neustarten',
+          nextChallengeBtn: 'Nächste Frage',
+          proofPlaceholderTitle: 'FORMALER BEWEIS & ERKLÄRUNG',
+          proofPlaceholderDesc: 'Wähle links eine Antwort, um den mathematischen Beweis und die Begründung anzuzeigen.',
+          correctProofTitle: '✓ Korrekter Beweis!',
+          wrongProofTitle: '✕ Gegenbeispiel Gefunden',
+          footerLeft: 'CS MATH LAB // Asymptotik • Lineare Algebra • Kryptographie • Graphentheorie',
+          footerRight: 'Interaktives Tutorial für Informatik-Mathematik'
+        }
+      };
+
+      const quizBankByLang = {
+        en: [
+          {
+            topic: 'Asymptotic Analysis',
+            question: 'Which tight asymptotic bound describes T(n) = 2T(n/2) + O(n) via the Master Theorem?',
+            options: ['Θ(n)', 'Θ(n log n)', 'Θ(n²)', 'Θ(log n)'],
+            answer: 1,
+            explanation: 'Here a = 2, b = 2, so n^(log_b a) = n^(log_2 2) = n¹. Because f(n) = Θ(n) matches Case 2 of the Master Theorem, T(n) = Θ(n log n).'
+          },
+          {
+            topic: 'Linear Algebra',
+            question: 'If a 2×2 matrix M has det(M) = 0, what geometric property holds for T(v) = Mv?',
+            options: [
+              'It rotates all vectors by 90 degrees',
+              'It preserves area and orientation',
+              'It collapses 2D space onto a line or origin (non-invertible)',
+              'Its eigenvalues are purely imaginary'
+            ],
+            answer: 2,
+            explanation: 'A zero determinant means columns are linearly dependent (rank < 2), crushing unit area to 0 so M⁻¹ does not exist.'
+          },
+          {
+            topic: 'Number Theory & Cryptography',
+            question: 'In RSA with primes p = 5 and q = 11, what is Euler’s Totient φ(N)?',
+            options: ['55', '40', '44', '50'],
+            answer: 1,
+            explanation: 'For distinct primes p and q, N = p · q = 55 and φ(N) = (p - 1)(q - 1) = 4 × 10 = 40.'
+          },
+          {
+            topic: 'Graph Theory',
+            question: 'Why can standard Dijkstra’s algorithm fail on graphs with negative-weight edges?',
+            options: [
+              'A priority queue cannot hold negative numbers',
+              'Once popped as visited, Dijkstra assumes no future path can be shorter',
+              'BFS is always required for negative edges',
+              'Negative weights always form infinite cycles'
+            ],
+            answer: 1,
+            explanation: 'Dijkstra assumes non-negative edge weights keep shortest-path estimates monotonic; negative edges break this invariant.'
+          },
+          {
+            topic: 'Discrete Mathematics',
+            question: 'How many squaring steps compute a^1024 mod m via Binary Exponentiation?',
+            options: ['1,024 steps', '512 steps', '10 steps (O(log₂ n))', '100 steps'],
+            answer: 2,
+            explanation: 'Since 1024 = 2¹⁰, repeated squaring computes a², a⁴, ..., a¹⁰²⁴ in log₂(1024) = 10 steps.'
+          },
+          {
+            topic: 'Eigenvalues & Spectral Theory',
+            question: 'For any square matrix M, the sum of its eigenvalues (λ₁ + λ₂ + ... + λₙ) equals:',
+            options: ['det(M)', 'rank(M)', 'Trace tr(M)', 'Frobenius norm'],
+            answer: 2,
+            explanation: 'By Vieta’s formulas on det(M - λI) = 0, the sum of eigenvalues equals the diagonal sum, tr(M).'
+          }
+        ],
+        pl: [
+          {
+            topic: 'Analiza Asymptotyczna',
+            question: 'Jaką ścisłą granicę daje rekurencja T(n) = 2T(n/2) + O(n) według Twierdzenia Master?',
+            options: ['Θ(n)', 'Θ(n log n)', 'Θ(n²)', 'Θ(log n)'],
+            answer: 1,
+            explanation: 'Mamy a = 2, b = 2, więc n^(log_b a) = n¹. Ponieważ f(n) = Θ(n) odpowiada II przypadkowi, T(n) = Θ(n log n).'
+          },
+          {
+            topic: 'Algebra Liniowa',
+            question: 'Jeśli macierz 2×2 ma det(M) = 0, jaka własność geometryczna zachodzi dla T(v) = Mv?',
+            options: [
+              'Obraca wszystkie wektory o 90°',
+              'Zachowuje pole i orientację',
+              'Zgniata płaszczyznę 2D do prostej lub początku układu (brak M⁻¹)',
+              'Ma wyłącznie urojone wartości własne'
+            ],
+            answer: 2,
+            explanation: 'Wyznacznik 0 oznacza liniową zależność kolumn (rząd < 2), więc pole kwadratu jednostkowego spada do 0.'
+          },
+          {
+            topic: 'Teoria Liczb i Kryptografia',
+            question: 'W RSA dla liczb pierwszych p = 5 i q = 11, ile wynosi funkcja φ(N) Eulera?',
+            options: ['55', '40', '44', '50'],
+            answer: 1,
+            explanation: 'Dla różnych liczb pierwszych p i q mamy N = p · q = 55 oraz φ(N) = (p - 1)(q - 1) = 4 × 10 = 40.'
+          },
+          {
+            topic: 'Teoria Grafów',
+            question: 'Dlaczego klasyczny algorytm Dijkstry może zawieść przy ujemnych wagach krawędzi?',
+            options: [
+              'Kolejka priorytetowa nie obsługuje liczb ujemnych',
+              'Po zdjęciu węzła jako odwiedzonego Dijkstra zakłada, że krótsza ścieżka już nie istnieje',
+              'Przy ujemnych wagach zawsze działa BFS',
+              'Ujemne wagi zawsze tworzą nieskończone cykle'
+            ],
+            answer: 1,
+            explanation: 'Dijkstra zakłada nieujemne wagi; ujemne krawędzie naruszają niezmiennik relaksacji.'
+          },
+          {
+            topic: 'Matematyka Dyskretna',
+            question: 'Ile podnoszeń do kwadratu wymaga a^1024 mod m w potęgowaniu binarnym?',
+            options: ['1024 kroki', '512 kroków', '10 kroków (O(log₂ n))', '100 kroków'],
+            answer: 2,
+            explanation: 'Ponieważ 1024 = 2¹⁰, kolejne podnoszenia do kwadratu dają wynik w log₂(1024) = 10 krokach.'
+          },
+          {
+            topic: 'Wartości Własne i Spektrum',
+            question: 'Dla dowolnej macierzy kwadratowej M suma wartości własnych (λ₁ + ... + λₙ) jest równa:',
+            options: ['det(M)', 'rank(M)', 'Śładowi tr(M)', 'Normie Frobeniusa'],
+            answer: 2,
+            explanation: 'Ze wzorów Viète’a dla wielomianu charakterystycznego suma wartości własnych równa się śładowi tr(M).'
+          }
+        ],
+        tr: [
+          {
+            topic: 'Asimptotik Analiz',
+            question: 'Ana Teorem’e göre T(n) = 2T(n/2) + O(n) bağıntısının sıkı asimptotik sınırı nedir?',
+            options: ['Θ(n)', 'Θ(n log n)', 'Θ(n²)', 'Θ(log n)'],
+            answer: 1,
+            explanation: 'a = 2, b = 2 için n^(log_b a) = n¹ olur. f(n) = Θ(n) Durum 2’ye uyduğundan T(n) = Θ(n log n) elde edilir.'
+          },
+          {
+            topic: 'Lineer Cebir',
+            question: '2×2 matris M için det(M) = 0 ise T(v) = Mv dönüşümünün geometrik sonucu nedir?',
+            options: [
+              'Tüm vektörleri 90° döndürür',
+              'Alanı ve yönelimi korur',
+              '2B düzlemi doğruya veya orijine çökerterek tersinmez yapar',
+              'Özdeğerleri tamamen sanaldır'
+            ],
+            answer: 2,
+            explanation: 'Determinantın 0 olması sütunların lineer bağımlı olduğunu (rank < 2) gösterir ve M⁻¹ bulunmaz.'
+          },
+          {
+            topic: 'Sayılar Teorisi ve Kriptografi',
+            question: 'p = 5 ve q = 11 asal sayılarıyla RSA’da Euler totient φ(N) değeri kaçtır?',
+            options: ['55', '40', '44', '50'],
+            answer: 1,
+            explanation: 'Farklı p ve q asalları için N = p · q = 55 ve φ(N) = (p - 1)(q - 1) = 4 × 10 = 40 olur.'
+          },
+          {
+            topic: 'Grafik Teorisi',
+            question: 'Standart Dijkstra algoritması negatif ağırlıklı kenarlarda neden hatalı sonuç verebilir?',
+            options: [
+              'Öncelik kuyruğu negatif sayı tutamaz',
+              'Ziyaret edilen düğüm için daha kısa yol çıkmayacağı varsayılır',
+              'Negatif kenarlarda her zaman BFS gerekir',
+              'Negatif ağırlıklar her zaman sonsuz döngü kurar'
+            ],
+            answer: 1,
+            explanation: 'Dijkstra negatif olmayan kenarların yol maliyetini azaltmayacağı varsayımına dayanır.'
+          },
+          {
+            topic: 'Ayrık Matematik',
+            question: 'İkili üs alma ile a^1024 mod m hesaplamak için kaç kare alma adımı gerekir?',
+            options: ['1.024 adım', '512 adım', '10 adım (O(log₂ n))', '100 adım'],
+            answer: 2,
+            explanation: '1024 = 2¹⁰ olduğundan ardışık kare alma işlemi log₂(1024) = 10 adımda tamamlanır.'
+          },
+          {
+            topic: 'Özdeğerler ve Spektral Teori',
+            question: 'Herhangi bir kare matris M için özdeğerlerin toplamı (λ₁ + ... + λₙ) neye eşittir?',
+            options: ['det(M)', 'rank(M)', 'İz değerine tr(M)', 'Frobenius normuna'],
+            answer: 2,
+            explanation: 'Karakteristik polinom det(M - λI) = 0 için Vieta bağıntıları gereği özdeğer toplamı tr(M) değeridir.'
+          }
+        ],
+        de: [
+          {
+            topic: 'Asymptotische Analyse',
+            question: 'Welche scharfe Schranke ergibt T(n) = 2T(n/2) + O(n) nach dem Master-Theorem?',
+            options: ['Θ(n)', 'Θ(n log n)', 'Θ(n²)', 'Θ(log n)'],
+            answer: 1,
+            explanation: 'Mit a = 2, b = 2 gilt n^(log_b a) = n¹. Da f(n) = Θ(n) Fall 2 entspricht, gilt T(n) = Θ(n log n).'
+          },
+          {
+            topic: 'Lineare Algebra',
+            question: 'Wenn eine 2×2-Matrix M die Determinante det(M) = 0 hat, was gilt für T(v) = Mv?',
+            options: [
+              'Sie dreht alle Vektoren um 90°',
+              'Sie erhält Fläche und Orientierung',
+              'Sie staucht den 2D-Raum auf eine Gerade oder den Ursprung (nicht invertierbar)',
+              'Ihre Eigenwerte sind rein imaginär'
+            ],
+            answer: 2,
+            explanation: 'det(M) = 0 bedeutet linear abhängige Spalten (Rang < 2); die Einheitsfläche wird 0 und M⁻¹ existiert nicht.'
+          },
+          {
+            topic: 'Zahlentheorie & Kryptographie',
+            question: 'Bei RSA mit p = 5 und q = 11: Wie groß ist die Eulersche Phi-Funktion φ(N)?',
+            options: ['55', '40', '44', '50'],
+            answer: 1,
+            explanation: 'Für verschiedene Primzahlen p, q gilt N = p · q = 55 und φ(N) = (p - 1)(q - 1) = 4 × 10 = 40.'
+          },
+          {
+            topic: 'Graphentheorie',
+            question: 'Warum kann Dijkstra bei negativen Kantengewichten versagen?',
+            options: [
+              'Prioritätswarteschlangen erlauben keine negativen Zahlen',
+              'Nach dem Besuchen nimmt Dijkstra an, dass kein kürzerer Weg mehr folgt',
+              'Bei negativen Gewichten ist immer BFS nötig',
+              'Negative Gewichte erzeugen immer Endlosschleifen'
+            ],
+            answer: 1,
+            explanation: 'Dijkstra setzt nicht-negative Gewichte voraus; negative Kanten verletzen die Monotonie der Distanzen.'
+          },
+          {
+            topic: 'Diskrete Mathematik',
+            question: 'Wie viele Quadrierungen erfordert a^1024 mod m per binärer Exponentiation?',
+            options: ['1.024 Schritte', '512 Schritte', '10 Schritte (O(log₂ n))', '100 Schritte'],
+            answer: 2,
+            explanation: 'Da 1024 = 2¹⁰ gilt, liefert wiederholtes Quadrieren das Ergebnis in log₂(1024) = 10 Schritten.'
+          },
+          {
+            topic: 'Eigenwerte & Spektraltheorie',
+            question: 'Für jede quadratische Matrix M ist die Summe der Eigenwerte (λ₁ + ... + λₙ) gleich:',
+            options: ['det(M)', 'Rang(M)', 'Der Spur tr(M)', 'Der Frobenius-Norm'],
+            answer: 2,
+            explanation: 'Nach Vieta für det(M - λI) = 0 entspricht die Eigenwertsumme der Spur tr(M).'
+          }
+        ]
+      };
+
+      let currentLang = 'en';
+      const t = () => i18n[currentLang];
+
+      /* ------------------------------------------------------------------- */
+      /* 2. SAFE HIGH-DPI CANVAS HELPER                                      */
+      /* ------------------------------------------------------------------- */
+      function prepareCanvas(canvas) {
+        if (!canvas || !canvas.parentElement) return null;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const width = Math.max(10, Math.floor(rect.width));
+        const height = Math.max(10, Math.floor(rect.height));
+        const dpr = Math.min(window.devicePixelRatio || 1, 3);
+        const targetW = Math.floor(width * dpr);
+        const targetH = Math.floor(height * dpr);
+
+        if (canvas.width !== targetW || canvas.height !== targetH) {
+          canvas.width = targetW;
+          canvas.height = targetH;
+        }
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, width, height, isDark: document.documentElement.classList.contains('dark') };
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 3. THEME SWITCHER (Dark Neon -> AMOLED Black -> Cyber-Light)        */
+      /* ------------------------------------------------------------------- */
+      const htmlEl = document.documentElement;
+      const themeBtn = document.getElementById('themeToggleBtn');
+      const themeIcon = document.getElementById('themeIcon');
+      const themeLabel = document.getElementById('themeLabel');
+      let themeMode = 0;
+
+      function redrawActiveCanvases() {
+        drawBigOChart();
+        drawLinearCanvas();
+        drawModClock();
+        drawGraphCanvas();
+      }
+
+      function applyTheme() {
+        htmlEl.classList.remove('dark', 'amoled');
+        if (themeMode === 0) {
+          htmlEl.classList.add('dark');
+          themeIcon.textContent = '🌙';
+          themeLabel.textContent = t().themeDark;
+        } else if (themeMode === 1) {
+          htmlEl.classList.add('dark', 'amoled');
+          themeIcon.textContent = '⚫';
+          themeLabel.textContent = t().themeAmoled;
+        } else {
+          themeIcon.textContent = '☀️';
+          themeLabel.textContent = t().themeLight;
+        }
+        redrawActiveCanvases();
+      }
+
+      themeBtn.addEventListener('click', () => {
+        themeMode = (themeMode + 1) % 3;
+        applyTheme();
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 4. NAVIGATION TABS                                                  */
+      /* ------------------------------------------------------------------- */
+      const navBtns = document.querySelectorAll('.nav-btn');
+      const panels = document.querySelectorAll('.module-panel');
+
+      navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-target');
+          navBtns.forEach(b => b.classList.toggle('active', b === btn));
+          panels.forEach(p => p.classList.toggle('active', p.id === `panel-${target}`));
+          requestAnimationFrame(redrawActiveCanvases);
+        });
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 5. MODULE 1: ASYMPTOTIC ANALYSIS & BIG-O LAB                        */
+      /* ------------------------------------------------------------------- */
+      const bigoN = document.getElementById('bigoN');
+      const bigoC = document.getElementById('bigoC');
+      const bigoN0 = document.getElementById('bigoN0');
+      const bigoCanvas = document.getElementById('bigoCanvas');
+
+      const complexityClasses = [
+        { id: 'o1', label: 'O(1)', color: '#10b981', active: true, fn: () => 1 },
+        { id: 'ologn', label: 'O(log n)', color: '#38bdf8', active: true, fn: n => Math.max(0.1, Math.log2(Math.max(1, n))) },
+        { id: 'on', label: 'O(n)', color: '#c4b5fd', active: true, fn: n => n },
+        { id: 'onlogn', label: 'O(n log n)', color: '#8b5cf6', active: true, fn: n => n * Math.max(0.1, Math.log2(Math.max(1, n))) },
+        { id: 'on2', label: 'c·O(n²)', color: '#ff007f', active: true, fn: (n, c) => c * n * n },
+        { id: 'o2n', label: 'O(2ⁿ)', color: '#f59e0b', active: false, fn: n => Math.pow(2, Math.min(n, 20)) }
+      ];
+
+      const bigoTogglesContainer = document.getElementById('bigoToggles');
+      complexityClasses.forEach(cls => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mono';
+        btn.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:9px; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.15s ease;';
+
+        const syncStyle = () => {
+          const isDark = htmlEl.classList.contains('dark');
+          if (cls.active) {
+            btn.style.border = `1px solid ${cls.color}`;
+            btn.style.background = `${cls.color}22`;
+            btn.style.color = isDark ? '#ffffff' : '#0f172a';
+          } else {
+            btn.style.border = '1px solid rgba(148,163,184,0.3)';
+            btn.style.background = 'transparent';
+            btn.style.color = '#94a3b8';
+          }
+        };
+
+        btn.innerHTML = `<span>${cls.label}</span><span style="width:9px; height:9px; border-radius:999px; background:${cls.color}; display:inline-block;"></span>`;
+        syncStyle();
+
+        btn.addEventListener('click', () => {
+          cls.active = !cls.active;
+          syncStyle();
+          drawBigOChart();
+        });
+        bigoTogglesContainer.appendChild(btn);
+      });
+
+      function updateBigO() {
+        const maxN = Math.max(4, parseInt(bigoN.value, 10) || 16);
+        const c = Math.max(0.1, parseFloat(bigoC.value) || 1.5);
+        const n0 = Math.min(Math.max(1, parseInt(bigoN0.value, 10) || 4), maxN);
+        bigoN0.value = n0;
+
+        document.getElementById('bigoNVal').textContent = maxN;
+        document.getElementById('bigoCVal').textContent = c.toFixed(1);
+        document.getElementById('bigoN0Val').textContent = n0;
+        document.getElementById('opsNLabel').textContent = maxN;
+
+        const fAtN0 = 2 * n0 + 4;
+        const cgAtN0 = +(c * n0 * n0).toFixed(2);
+        const holds = fAtN0 <= cgAtN0;
+
+        document.getElementById('proofC').textContent = c.toFixed(1);
+        document.getElementById('proofN0').textContent = n0;
+        const badge = document.getElementById('bigoProofBadge');
+        const proofMath = document.getElementById('bigoProofMath');
+
+        if (holds) {
+          badge.textContent = t().validBoundBadge;
+          badge.className = 'badge-status badge-ok mono';
+          proofMath.textContent = `f(${n0}) = ${fAtN0} ≤ ${c.toFixed(1)} × ${n0}² = ${cgAtN0}  [${t().holdsSuffix} ${n0}]`;
+        } else {
+          badge.textContent = t().invalidBoundBadge;
+          badge.className = 'badge-status badge-err mono';
+          proofMath.textContent = `f(${n0}) = ${fAtN0} > ${c.toFixed(1)} × ${n0}² = ${cgAtN0}  [${t().violatedSuffix}]`;
+        }
+
+        const opsGrid = document.getElementById('bigoOpsGrid');
+        opsGrid.innerHTML = '';
+        complexityClasses.forEach(cls => {
+          const val = cls.id === 'o2n' && maxN > 24
+            ? `2^${maxN} (${t().overflowText})`
+            : `${Math.round(cls.fn(maxN, c)).toLocaleString()} ${t().opsSuffix}`;
+          const card = document.createElement('div');
+          card.className = 'card-box';
+          card.style.padding = '8px 10px';
+          card.innerHTML = `<div style="font-weight:700; color:${cls.color};">${cls.label}</div><div style="margin-top:2px;">${val}</div>`;
+          opsGrid.appendChild(card);
+        });
+
+        drawBigOChart();
+      }
+
+      function drawBigOChart() {
+        const info = prepareCanvas(bigoCanvas);
+        if (!info) return;
+        const { ctx, width: w, height: h, isDark } = info;
+
+        const pad = { top: 24, right: 22, bottom: 32, left: 48 };
+        const plotW = Math.max(20, w - pad.left - pad.right);
+        const plotH = Math.max(20, h - pad.top - pad.bottom);
+
+        ctx.clearRect(0, 0, w, h);
+
+        const maxN = Math.max(4, parseInt(bigoN.value, 10) || 16);
+        const c = Math.max(0.1, parseFloat(bigoC.value) || 1.5);
+        const n0 = Math.min(Math.max(1, parseInt(bigoN0.value, 10) || 4), maxN);
+
+        let maxY = 40;
+        complexityClasses.forEach(cls => {
+          if (cls.active) {
+            const v = cls.fn(maxN, c);
+            if (Number.isFinite(v) && v > maxY && v <= 2500) maxY = v;
+          }
+        });
+        if (complexityClasses.find(x => x.id === 'o2n').active && maxN >= 11) {
+          maxY = Math.min(2048, Math.pow(2, maxN));
+        }
+        maxY = Math.max(1, maxY);
+
+        const toX = n => pad.left + ((n - 1) / Math.max(1, maxN - 1)) * plotW;
+        const toY = val => pad.top + plotH - Math.min(1, Math.max(0, val / maxY)) * plotH;
+
+        const xN0 = toX(n0);
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.1)';
+        ctx.fillRect(xN0, pad.top, Math.max(0, pad.left + plotW - xN0), plotH);
+
+        ctx.strokeStyle = isDark ? 'rgba(139, 92, 246, 0.18)' : 'rgba(109, 40, 217, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.font = '10px monospace';
+        for (let i = 0; i <= 4; i++) {
+          const y = pad.top + (plotH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(pad.left + plotW, y);
+          ctx.stroke();
+
+          ctx.fillStyle = isDark ? '#94a3b8' : '#475569';
+          ctx.textAlign = 'right';
+          ctx.fillText(Math.round(maxY * (1 - i / 4)), pad.left - 8, y + 3);
+        }
+
+        ctx.textAlign = 'center';
+        const stepN = Math.max(1, Math.floor(maxN / 6));
+        for (let n = 1; n <= maxN; n += stepN) {
+          ctx.fillStyle = isDark ? '#94a3b8' : '#475569';
+          ctx.fillText(`n=${n}`, toX(n), h - 10);
+        }
+
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = '#ff007f';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(xN0, pad.top);
+        ctx.lineTo(xN0, pad.top + plotH);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#ff007f';
+        ctx.font = 'bold 11px monospace';
+        ctx.fillText(`n₀=${n0}`, xN0, pad.top - 8);
+
+        // f(n) = 2n + 4 dashed reference curve
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = isDark ? '#e2e8f0' : '#1e293b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let s = 0; s <= 80; s++) {
+          const n = 1 + (s / 80) * (maxN - 1);
+          const x = toX(n);
+          const y = toY(2 * n + 4);
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        complexityClasses.forEach(cls => {
+          if (!cls.active) return;
+          ctx.strokeStyle = cls.color;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          for (let s = 0; s <= 100; s++) {
+            const n = 1 + (s / 100) * (maxN - 1);
+            const x = toX(n);
+            const y = toY(cls.fn(n, c));
+            if (s === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        });
+      }
+
+      [bigoN, bigoC, bigoN0].forEach(el => el.addEventListener('input', updateBigO));
+      document.getElementById('bigoResetBtn').addEventListener('click', () => {
+        bigoN.value = 16;
+        bigoC.value = 1.5;
+        bigoN0.value = 4;
+        updateBigO();
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 6. MODULE 2: LINEAR ALGEBRA & 2D MATRIX TRANSFORMATIONS            */
+      /* ------------------------------------------------------------------- */
+      const matA = document.getElementById('matA');
+      const matB = document.getElementById('matB');
+      const matC = document.getElementById('matC');
+      const matD = document.getElementById('matD');
+      const linearCanvas = document.getElementById('linearCanvas');
+      let showEigenvectors = true;
+
+      document.getElementById('toggleEigenBtn').addEventListener('click', e => {
+        showEigenvectors = !showEigenvectors;
+        e.target.textContent = showEigenvectors ? 'ON' : 'OFF';
+        e.target.className = showEigenvectors ? 'btn-action btn-primary mono' : 'btn-action mono';
+        drawLinearCanvas();
+      });
+
+      const presets = {
+        identity: [1.0, 0.0, 0.0, 1.0],
+        rotate45: [0.7, -0.7, 0.7, 0.7],
+        shear: [1.0, 1.0, 0.0, 1.0],
+        scale: [1.5, 0.0, 0.0, 0.5],
+        reflect: [0.0, 1.0, 1.0, 0.0],
+        singular: [1.2, 0.6, 0.8, 0.4]
+      };
+
+      document.querySelectorAll('.mat-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const vals = presets[btn.dataset.preset];
+          if (!vals) return;
+          [matA.value, matB.value, matC.value, matD.value] = vals;
+          updateLinearAlgebra();
+        });
+      });
+
+      function updateLinearAlgebra() {
+        const a = parseFloat(matA.value) || 0;
+        const b = parseFloat(matB.value) || 0;
+        const c = parseFloat(matC.value) || 0;
+        const d = parseFloat(matD.value) || 0;
+
+        ['A', 'B', 'C', 'D'].forEach((k, idx) => {
+          const formatted = [a, b, c, d][idx].toFixed(1);
+          document.getElementById(`mat${k}Val`).textContent = formatted;
+          document.getElementById(`matDisp${k}`).textContent = formatted;
+        });
+
+        const det = a * d - b * c;
+        const trace = a + d;
+        const rank = Math.abs(det) > 0.01
+          ? t().rankFull
+          : (Math.abs(a) + Math.abs(b) + Math.abs(c) + Math.abs(d) > 0.01 ? t().rankSingular : t().rankZero);
+
+        document.getElementById('linDetVal').textContent = det.toFixed(2);
+        document.getElementById('linTraceVal').textContent = trace.toFixed(2);
+        document.getElementById('linRankVal').textContent = rank;
+
+        const orientTag = document.getElementById('detOrientationTag');
+        if (Math.abs(det) <= 0.01) {
+          orientTag.textContent = t().collapsedSpace;
+          orientTag.className = 'badge-status badge-err';
+        } else if (det < 0) {
+          orientTag.textContent = t().flippedSpace;
+          orientTag.className = 'badge-status badge-err';
+        } else {
+          orientTag.textContent = `${t().areaScalePrefix} ${det.toFixed(2)}x`;
+          orientTag.className = 'badge-status badge-ok';
+        }
+
+        const disc = trace * trace - 4 * det;
+        if (disc >= 0) {
+          const l1 = (trace + Math.sqrt(disc)) / 2;
+          const l2 = (trace - Math.sqrt(disc)) / 2;
+          document.getElementById('linEigenVal').textContent = `${l1.toFixed(2)}, ${l2.toFixed(2)}`;
+        } else {
+          const real = (trace / 2).toFixed(2);
+          const imag = (Math.sqrt(-disc) / 2).toFixed(2);
+          document.getElementById('linEigenVal').textContent = `${real} ± ${imag}i`;
+        }
+
+        drawLinearCanvas();
+      }
+
+      function drawLinearCanvas() {
+        const info = prepareCanvas(linearCanvas);
+        if (!info) return;
+        const { ctx, width: w, height: h, isDark } = info;
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const scale = Math.min(w, h) / 7;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const a = parseFloat(matA.value) || 0;
+        const b = parseFloat(matB.value) || 0;
+        const c = parseFloat(matC.value) || 0;
+        const d = parseFloat(matD.value) || 0;
+
+        const toScreen = (x, y) => [cx + x * scale, cy - y * scale];
+        const transform = (x, y) => [a * x + b * y, c * x + d * y];
+
+        ctx.strokeStyle = isDark ? 'rgba(139, 92, 246, 0.22)' : 'rgba(109, 40, 217, 0.16)';
+        ctx.lineWidth = 1;
+        for (let g = -6; g <= 6; g++) {
+          const [x1, y1] = toScreen(...transform(g, -6));
+          const [x2, y2] = toScreen(...transform(g, 6));
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+          const [hx1, hy1] = toScreen(...transform(-6, g));
+          const [hx2, hy2] = toScreen(...transform(6, g));
+          ctx.beginPath();
+          ctx.moveTo(hx1, hy1);
+          ctx.lineTo(hx2, hy2);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.24)' : 'rgba(15, 23, 42, 0.24)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(w, cy);
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, h);
+        ctx.stroke();
+
+        const p0 = toScreen(0, 0);
+        const p1 = toScreen(...transform(1, 0));
+        const p2 = toScreen(...transform(1, 1));
+        const p3 = toScreen(...transform(0, 1));
+
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.16)';
+        ctx.strokeStyle = 'rgba(196, 181, 253, 0.85)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(...p0);
+        ctx.lineTo(...p1);
+        ctx.lineTo(...p2);
+        ctx.lineTo(...p3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        const trace = a + d;
+        const det = a * d - b * c;
+        const disc = trace * trace - 4 * det;
+        if (showEigenvectors && disc >= 0) {
+          const lambdas = [(trace + Math.sqrt(disc)) / 2, (trace - Math.sqrt(disc)) / 2];
+          lambdas.forEach(lam => {
+            let ex = 1, ey = 0;
+            if (Math.abs(b) > 0.001) {
+              ex = b;
+              ey = lam - a;
+            } else if (Math.abs(c) > 0.001) {
+              ex = lam - d;
+              ey = c;
+            } else if (Math.abs(a - lam) > 0.001) {
+              ex = 0;
+              ey = 1;
+            }
+            const norm = Math.hypot(ex, ey);
+            if (norm > 0.001) {
+              ex /= norm;
+              ey /= norm;
+              const [s1x, s1y] = toScreen(-ex * 5, -ey * 5);
+              const [s2x, s2y] = toScreen(ex * 5, ey * 5);
+              ctx.save();
+              ctx.setLineDash([6, 4]);
+              ctx.strokeStyle = 'rgba(251, 191, 36, 0.8)';
+              ctx.lineWidth = 1.6;
+              ctx.beginPath();
+              ctx.moveTo(s1x, s1y);
+              ctx.lineTo(s2x, s2y);
+              ctx.stroke();
+              ctx.restore();
+            }
+          });
+        }
+
+        const drawVec = (vx, vy, color, label) => {
+          const [tx, ty] = toScreen(vx, vy);
+          ctx.strokeStyle = color;
+          ctx.fillStyle = color;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(tx, ty);
+          ctx.stroke();
+
+          const angle = Math.atan2(ty - cy, tx - cx);
+          const headLen = 10;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+          ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.font = 'bold 12px monospace';
+          ctx.fillText(label, tx + 8, ty - 6);
+        };
+
+        drawVec(a, c, '#ff007f', `î (${a.toFixed(1)}, ${c.toFixed(1)})`);
+        drawVec(b, d, '#c4b5fd', `ĵ (${b.toFixed(1)}, ${d.toFixed(1)})`);
+      }
+
+      [matA, matB, matC, matD].forEach(el => el.addEventListener('input', updateLinearAlgebra));
+
+      /* ------------------------------------------------------------------- */
+      /* 7. MODULE 3: DISCRETE MATH & RSA CRYPTOSYSTEM                      */
+      /* ------------------------------------------------------------------- */
+      const modBase = document.getElementById('modBase');
+      const modExp = document.getElementById('modExp');
+      const modMod = document.getElementById('modMod');
+      const modClockCanvas = document.getElementById('modClockCanvas');
+
+      function modPowWithTrace(base, exp, mod) {
+        const m = Math.max(2, mod);
+        let result = 1 % m;
+        let b = ((base % m) + m) % m;
+        let e = Math.max(0, exp);
+        const steps = [];
+        let bitIdx = 0;
+
+        if (e === 0) {
+          steps.push(`exp = 0 → result = 1 mod ${m}`);
+          return { result, steps };
+        }
+
+        while (e > 0) {
+          const bit = e & 1;
+          if (bit === 1) {
+            const prev = result;
+            result = (result * b) % m;
+            steps.push(`bit ${bitIdx}=1 → (${prev} × ${b}) mod ${m} = ${result}`);
+          } else {
+            steps.push(`bit ${bitIdx}=0 → keep ${result}`);
+          }
+          e >>= 1;
+          if (e > 0) {
+            const prevB = b;
+            b = (b * b) % m;
+            steps.push(`  sq: ${prevB}² mod ${m} = ${b}`);
+          }
+          bitIdx++;
+        }
+        return { result, steps };
+      }
+
+      function updateModularLab() {
+        const a = parseInt(modBase.value, 10) || 3;
+        const b = parseInt(modExp.value, 10) || 13;
+        const m = Math.max(2, parseInt(modMod.value, 10) || 17);
+
+        document.getElementById('modBaseVal').textContent = a;
+        document.getElementById('modExpVal').textContent = b;
+        document.getElementById('modModVal').textContent = m;
+        document.getElementById('modBinText').textContent = `${b.toString(2)}₂`;
+
+        const { result, steps } = modPowWithTrace(a, b, m);
+        document.getElementById('modEqText').textContent = `${a}^${b} mod ${m}`;
+        document.getElementById('modResultText').textContent = `≡ ${result}`;
+        document.getElementById('modTraceBox').innerHTML = steps.map(s => `<div>${s}</div>`).join('');
+
+        drawModClock();
+      }
+
+      function drawModClock() {
+        const info = prepareCanvas(modClockCanvas);
+        if (!info) return;
+        const { ctx, width: w, height: h, isDark } = info;
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const radius = Math.max(24, Math.min(w, h) * 0.36);
+
+        ctx.clearRect(0, 0, w, h);
+
+        const a = parseInt(modBase.value, 10) || 3;
+        const b = parseInt(modExp.value, 10) || 13;
+        const m = Math.max(2, parseInt(modMod.value, 10) || 17);
+
+        ctx.strokeStyle = isDark ? 'rgba(139, 92, 246, 0.32)' : 'rgba(109, 40, 217, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const nodePos = idx => {
+          const angle = -Math.PI / 2 + (idx / m) * Math.PI * 2;
+          return [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
+        };
+
+        const sequence = [];
+        let cur = 1 % m;
+        for (let i = 1; i <= b; i++) {
+          cur = (cur * a) % m;
+          sequence.push(cur);
+        }
+
+        for (let i = 0; i < sequence.length - 1; i++) {
+          const [x1, y1] = nodePos(sequence[i]);
+          const [x2, y2] = nodePos(sequence[i + 1]);
+          ctx.strokeStyle = i === sequence.length - 2 ? '#ff007f' : 'rgba(196, 181, 253, 0.45)';
+          ctx.lineWidth = i === sequence.length - 2 ? 2.5 : 1.3;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        const finalResidue = sequence.length > 0 ? sequence[sequence.length - 1] : 1 % m;
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let i = 0; i < m; i++) {
+          const [nx, ny] = nodePos(i);
+          const isFinal = i === finalResidue;
+          const isVisited = sequence.includes(i);
+
+          ctx.beginPath();
+          ctx.arc(nx, ny, isFinal ? 12 : 9.5, 0, Math.PI * 2);
+          if (isFinal) ctx.fillStyle = '#ff007f';
+          else if (isVisited) ctx.fillStyle = '#8b5cf6';
+          else ctx.fillStyle = isDark ? '#161626' : '#ede9fe';
+          ctx.fill();
+
+          ctx.fillStyle = isFinal || isVisited ? '#ffffff' : (isDark ? '#cbd5e1' : '#334155');
+          ctx.fillText(i, nx, ny);
+        }
+      }
+
+      [modBase, modExp, modMod].forEach(el => el.addEventListener('input', updateModularLab));
+
+      const rsaP = document.getElementById('rsaP');
+      const rsaQ = document.getElementById('rsaQ');
+      const rsaMsg = document.getElementById('rsaMsg');
+
+      function gcd(x, y) {
+        let a = Math.abs(x);
+        let b = Math.abs(y);
+        while (b !== 0) {
+          const tmp = b;
+          b = a % b;
+          a = tmp;
+        }
+        return a;
+      }
+
+      function modInverse(e, phi) {
+        let [oldR, r] = [e, phi];
+        let [oldS, s] = [1, 0];
+        while (r !== 0) {
+          const q = Math.floor(oldR / r);
+          [oldR, r] = [r, oldR - q * r];
+          [oldS, s] = [s, oldS - q * s];
+        }
+        return ((oldS % phi) + phi) % phi;
+      }
+
+      function updateRSA() {
+        let p = parseInt(rsaP.value, 10) || 11;
+        let q = parseInt(rsaQ.value, 10) || 17;
+        if (p === q) {
+          q = p === 11 ? 13 : 11;
+          rsaQ.value = String(q);
+        }
+        const N = p * q;
+        const phi = (p - 1) * (q - 1);
+
+        let e = 3;
+        while (e < phi && gcd(e, phi) !== 1) e += 2;
+        const d = modInverse(e, phi);
+
+        rsaMsg.max = String(Math.max(2, N - 1));
+        const m = Math.min(Math.max(2, parseInt(rsaMsg.value, 10) || 42), N - 1);
+        rsaMsg.value = String(m);
+
+        const cipher = modPowWithTrace(m, e, N).result;
+        const decrypted = modPowWithTrace(cipher, d, N).result;
+
+        document.getElementById('rsaMsgVal').textContent = m;
+        document.getElementById('rsaNVal').textContent = N;
+        document.getElementById('rsaPhiVal').textContent = phi;
+        document.getElementById('rsaPubVal').textContent = `(${e}, ${N})`;
+        document.getElementById('rsaPrivVal').textContent = `(${d}, ${N})`;
+        document.getElementById('rsaCipherVal').textContent = `C = ${cipher}`;
+        document.getElementById('rsaDecryptVal').textContent = `M' = ${decrypted} (${t().verifiedTag})`;
+      }
+
+      [rsaP, rsaQ, rsaMsg].forEach(el => el.addEventListener('input', updateRSA));
+
+      /* ------------------------------------------------------------------- */
+      /* 8. MODULE 4: GRAPH THEORY & PATHFINDING VISUALIZER                  */
+      /* ------------------------------------------------------------------- */
+      const graphCanvas = document.getElementById('graphCanvas');
+      const graphAlgoSelect = document.getElementById('graphAlgoSelect');
+
+      let nodes = [];
+      let edges = [];
+      let sourceId = 'A';
+      let targetId = 'F';
+      let draggingNode = null;
+      let autoPlayTimer = null;
+      let algoState = null;
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+        }
+        document.getElementById('graphPlayLabel').textContent = t().autoPlayBtn;
+      }
+
+      function generateGraph(randomize = false) {
+        stopAutoPlay();
+        const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+        const baseCoords = [
+          { x: 0.14, y: 0.50 },
+          { x: 0.36, y: 0.22 },
+          { x: 0.38, y: 0.78 },
+          { x: 0.64, y: 0.22 },
+          { x: 0.66, y: 0.78 },
+          { x: 0.86, y: 0.50 }
+        ];
+
+        nodes = labels.map((id, idx) => ({
+          id,
+          rx: randomize ? Math.min(0.88, Math.max(0.12, baseCoords[idx].x + (Math.random() - 0.5) * 0.12)) : baseCoords[idx].x,
+          ry: randomize ? Math.min(0.85, Math.max(0.15, baseCoords[idx].y + (Math.random() - 0.5) * 0.18)) : baseCoords[idx].y
+        }));
+
+        const randW = () => Math.floor(Math.random() * 8) + 2;
+        edges = [
+          { u: 'A', v: 'B', w: randomize ? randW() : 4 },
+          { u: 'A', v: 'C', w: randomize ? randW() : 2 },
+          { u: 'B', v: 'C', w: randomize ? randW() : 1 },
+          { u: 'B', v: 'D', w: randomize ? randW() : 5 },
+          { u: 'C', v: 'E', w: randomize ? randW() : 8 },
+          { u: 'C', v: 'D', w: randomize ? randW() : 7 },
+          { u: 'D', v: 'E', w: randomize ? randW() : 2 },
+          { u: 'D', v: 'F', w: randomize ? randW() : 6 },
+          { u: 'E', v: 'F', w: randomize ? randW() : 3 }
+        ];
+
+        resetAlgoState();
+      }
+
+      function reconstructShortestPath() {
+        if (!algoState) return;
+        algoState.shortestPathEdges.clear();
+        let curr = targetId;
+        const guard = new Set();
+        while (curr && algoState.prev[curr] && !guard.has(curr)) {
+          guard.add(curr);
+          const p = algoState.prev[curr];
+          algoState.shortestPathEdges.add(`${p}-${curr}`);
+          algoState.shortestPathEdges.add(`${curr}-${p}`);
+          curr = p;
+        }
+      }
+
+      function updateGraphInspector() {
+        if (!algoState) return;
+        const frontierBox = document.getElementById('graphFrontierBox');
+        if (algoState.frontier.length === 0) {
+          frontierBox.innerHTML = `<span class="text-muted" style="font-style:italic;">${t().frontierEmpty}</span>`;
+        } else {
+          frontierBox.innerHTML = algoState.frontier
+            .map(item => `<span style="padding:2px 7px; border-radius:6px; background:rgba(255,0,127,0.18); color:var(--magenta); border:1px solid rgba(255,0,127,0.35);">${item.id} (${item.cost})</span>`)
+            .join('');
+        }
+
+        const tbody = document.getElementById('graphTableBody');
+        tbody.innerHTML = nodes.map(n => {
+          const d = algoState.dist[n.id];
+          const p = algoState.prev[n.id] || '—';
+          const isVisited = algoState.visited.has(n.id);
+          const isCur = algoState.current === n.id;
+          const stateBadge = isCur
+            ? `<span class="text-mag" style="font-weight:700;">${t().stateActive}</span>`
+            : (isVisited ? `<span class="text-ok">${t().stateVisited}</span>` : `<span class="text-muted">${t().stateUnseen}</span>`);
+          const role = n.id === sourceId ? ' (S)' : (n.id === targetId ? ' (T)' : '');
+
+          return `
+            <tr>
+              <td style="font-weight:700;">${n.id}${role}</td>
+              <td class="text-purp" style="font-weight:700;">${d === Infinity ? '∞' : d}</td>
+              <td>${p}</td>
+              <td>${stateBadge}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      function resetAlgoState() {
+        stopAutoPlay();
+        const dist = {};
+        const prev = {};
+        nodes.forEach(n => {
+          dist[n.id] = n.id === sourceId ? 0 : Infinity;
+          prev[n.id] = null;
+        });
+
+        algoState = {
+          algo: graphAlgoSelect.value,
+          dist,
+          prev,
+          visited: new Set(),
+          frontier: [{ id: sourceId, cost: 0 }],
+          current: null,
+          done: false,
+          shortestPathEdges: new Set()
+        };
+
+        document.getElementById('graphStatusText').innerHTML =
+          t().graphReadyStatus(algoState.algo, sourceId, targetId);
+        updateGraphInspector();
+        drawGraphCanvas();
+      }
+
+      function stepGraphAlgorithm() {
+        if (!algoState || algoState.done) return;
+        const { algo, dist, prev, visited, frontier } = algoState;
+
+        if (frontier.length === 0) {
+          algoState.done = true;
+          algoState.current = null;
+          reconstructShortestPath();
+          document.getElementById('graphStatusText').innerHTML =
+            t().graphDoneStatus(targetId, dist[targetId]);
+          updateGraphInspector();
+          drawGraphCanvas();
+          stopAutoPlay();
+          return;
+        }
+
+        let nextItem;
+        if (algo === 'dijkstra') {
+          frontier.sort((x, y) => x.cost - y.cost);
+          nextItem = frontier.shift();
+        } else if (algo === 'bfs') {
+          nextItem = frontier.shift();
+        } else {
+          nextItem = frontier.pop();
+        }
+
+        const u = nextItem.id;
+        if (visited.has(u)) {
+          stepGraphAlgorithm();
+          return;
+        }
+
+        visited.add(u);
+        algoState.current = u;
+
+        if (u === targetId) {
+          algoState.done = true;
+          reconstructShortestPath();
+          document.getElementById('graphStatusText').innerHTML =
+            t().graphReachedStatus(targetId, dist[targetId]);
+          updateGraphInspector();
+          drawGraphCanvas();
+          stopAutoPlay();
+          return;
+        }
+
+        const neighbors = [];
+        edges.forEach(e => {
+          if (e.u === u) neighbors.push({ id: e.v, w: e.w });
+          else if (e.v === u) neighbors.push({ id: e.u, w: e.w });
+        });
+
+        neighbors.forEach(({ id: v, w }) => {
+          if (visited.has(v)) return;
+          if (algo === 'dijkstra') {
+            const alt = dist[u] + w;
+            if (alt < dist[v]) {
+              dist[v] = alt;
+              prev[v] = u;
+              frontier.push({ id: v, cost: alt });
+            }
+          } else {
+            if (dist[v] === Infinity) {
+              dist[v] = dist[u] + w;
+              prev[v] = u;
+              frontier.push({ id: v, cost: dist[v] });
+            }
+          }
+        });
+
+        document.getElementById('graphStatusText').innerHTML =
+          t().graphExpandedStatus(u, dist[u], neighbors.length);
+        updateGraphInspector();
+        drawGraphCanvas();
+      }
+
+      function drawGraphCanvas() {
+        const info = prepareCanvas(graphCanvas);
+        if (!info) return;
+        const { ctx, width: w, height: h, isDark } = info;
+
+        ctx.clearRect(0, 0, w, h);
+        const getCoords = n => [n.rx * w, n.ry * h];
+
+        edges.forEach(e => {
+          const nu = nodes.find(n => n.id === e.u);
+          const nv = nodes.find(n => n.id === e.v);
+          if (!nu || !nv) return;
+          const [x1, y1] = getCoords(nu);
+          const [x2, y2] = getCoords(nv);
+          const isShortest = algoState && algoState.shortestPathEdges.has(`${e.u}-${e.v}`);
+
+          ctx.strokeStyle = isShortest
+            ? '#ff007f'
+            : (isDark ? 'rgba(139, 92, 246, 0.35)' : 'rgba(109, 40, 217, 0.3)');
+          ctx.lineWidth = isShortest ? 4 : 2;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+          ctx.fillStyle = isDark ? '#0d0d14' : '#ffffff';
+          ctx.beginPath();
+          ctx.arc(mx, my, 11, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = isShortest ? '#ff007f' : '#8b5cf6';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.fillStyle = isShortest ? '#ff007f' : (isDark ? '#e2e8f0' : '#0f172a');
+          ctx.font = 'bold 11px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(e.w, mx, my);
+        });
+
+        nodes.forEach(n => {
+          const [nx, ny] = getCoords(n);
+          const isSource = n.id === sourceId;
+          const isTarget = n.id === targetId;
+          const isVisited = algoState && algoState.visited.has(n.id);
+          const isCurrent = algoState && algoState.current === n.id;
+
+          ctx.beginPath();
+          ctx.arc(nx, ny, 20, 0, Math.PI * 2);
+
+          if (isCurrent) ctx.fillStyle = '#ff007f';
+          else if (isSource) ctx.fillStyle = '#10b981';
+          else if (isTarget) ctx.fillStyle = '#e11d48';
+          else if (isVisited) ctx.fillStyle = '#8b5cf6';
+          else ctx.fillStyle = isDark ? '#161626' : '#ede9fe';
+          ctx.fill();
+
+          ctx.strokeStyle = isCurrent || isTarget ? '#ffffff' : '#c4b5fd';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          ctx.fillStyle = (isCurrent || isSource || isTarget || isVisited) ? '#ffffff' : (isDark ? '#f8fafc' : '#0f172a');
+          ctx.font = 'bold 13px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(n.id, nx, ny);
+        });
+      }
+
+      graphCanvas.addEventListener('mousedown', e => {
+        const rect = graphCanvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const hit = nodes.find(n => Math.hypot(n.rx * rect.width - mx, n.ry * rect.height - my) <= 22);
+        if (hit) draggingNode = { node: hit, moved: false, shift: e.shiftKey };
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!draggingNode) return;
+        const rect = graphCanvas.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return;
+        draggingNode.moved = true;
+        draggingNode.node.rx = Math.min(0.92, Math.max(0.08, (e.clientX - rect.left) / rect.width));
+        draggingNode.node.ry = Math.min(0.90, Math.max(0.10, (e.clientY - rect.top) / rect.height));
+        drawGraphCanvas();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (draggingNode && !draggingNode.moved) {
+          const clickedId = draggingNode.node.id;
+          if (draggingNode.shift && clickedId !== targetId) {
+            sourceId = clickedId;
+            resetAlgoState();
+          } else if (!draggingNode.shift && clickedId !== sourceId) {
+            targetId = clickedId;
+            resetAlgoState();
+          }
+        }
+        draggingNode = null;
+      });
+
+      document.getElementById('graphStepBtn').addEventListener('click', stepGraphAlgorithm);
+      document.getElementById('graphResetBtn').addEventListener('click', resetAlgoState);
+      document.getElementById('graphRandomBtn').addEventListener('click', () => generateGraph(true));
+      graphAlgoSelect.addEventListener('change', resetAlgoState);
+
+      document.getElementById('graphPlayBtn').addEventListener('click', () => {
+        if (autoPlayTimer) {
+          stopAutoPlay();
+        } else {
+          if (!algoState || algoState.done) resetAlgoState();
+          const speed = Math.max(120, 1150 - (parseInt(document.getElementById('graphSpeed').value, 10) || 550));
+          document.getElementById('graphPlayLabel').textContent = t().pauseBtn;
+          autoPlayTimer = setInterval(stepGraphAlgorithm, speed);
+        }
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 9. MODULE 5: CS MATH CHALLENGE ARENA                                */
+      /* ------------------------------------------------------------------- */
+      let quizIdx = 0;
+      let quizScore = 0;
+      let quizAnsweredCount = 0;
+      let quizStreak = 0;
+
+      function renderQuizQuestion() {
+        const bank = quizBankByLang[currentLang] || quizBankByLang.en;
+        const q = bank[quizIdx % bank.length];
+        document.getElementById('quizTopicBadge').textContent = q.topic;
+        document.getElementById('quizCounterText').textContent = t().questionCounter(quizIdx + 1, bank.length);
+        document.getElementById('quizQuestionText').textContent = q.question;
+
+        document.getElementById('quizFeedbackBox').style.display = 'none';
+        document.getElementById('quizPlaceholderBox').style.display = 'block';
+        document.getElementById('quizNextBtn').disabled = true;
+
+        const grid = document.getElementById('quizOptionsGrid');
+        grid.innerHTML = '';
+
+        q.options.forEach((opt, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quiz-opt';
+          btn.innerHTML = `<span class="quiz-letter mono">${String.fromCharCode(65 + i)}</span><span>${opt}</span>`;
+          btn.addEventListener('click', () => handleQuizAnswer(i, btn));
+          grid.appendChild(btn);
+        });
+      }
+
+      function handleQuizAnswer(selectedIdx, clickedBtn) {
+        const bank = quizBankByLang[currentLang] || quizBankByLang.en;
+        const q = bank[quizIdx % bank.length];
+        const allBtns = document.querySelectorAll('.quiz-opt');
+        allBtns.forEach(b => (b.disabled = true));
+
+        const isCorrect = selectedIdx === q.answer;
+        quizAnsweredCount++;
+
+        if (isCorrect) {
+          quizScore++;
+          quizStreak++;
+          clickedBtn.classList.add('correct');
+        } else {
+          quizStreak = 0;
+          clickedBtn.classList.add('wrong');
+          if (allBtns[q.answer]) allBtns[q.answer].classList.add('correct');
+        }
+
+        document.getElementById('quizScoreVal').textContent = `${quizScore} / ${quizAnsweredCount}`;
+        document.getElementById('quizStreakVal').textContent = `${quizStreak} 🔥`;
+
+        const feedbackBox = document.getElementById('quizFeedbackBox');
+        const feedbackTitle = document.getElementById('quizFeedbackTitle');
+        const feedbackBody = document.getElementById('quizFeedbackBody');
+
+        document.getElementById('quizPlaceholderBox').style.display = 'none';
+        feedbackBox.style.display = 'block';
+        feedbackTitle.textContent = isCorrect ? t().correctProofTitle : t().wrongProofTitle;
+        feedbackTitle.className = isCorrect ? 'mono text-ok' : 'mono text-err';
+        feedbackTitle.style.fontWeight = '700';
+        feedbackTitle.style.marginBottom = '6px';
+        feedbackBody.textContent = q.explanation;
+
+        document.getElementById('quizNextBtn').disabled = false;
+      }
+
+      document.getElementById('quizNextBtn').addEventListener('click', () => {
+        const bank = quizBankByLang[currentLang] || quizBankByLang.en;
+        quizIdx = (quizIdx + 1) % bank.length;
+        renderQuizQuestion();
+      });
+
+      document.getElementById('quizRestartBtn').addEventListener('click', () => {
+        quizIdx = 0;
+        quizScore = 0;
+        quizAnsweredCount = 0;
+        quizStreak = 0;
+        document.getElementById('quizScoreVal').textContent = '0 / 0';
+        document.getElementById('quizStreakVal').textContent = '0 🔥';
+        renderQuizQuestion();
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 10. LANGUAGE APPLICATION & INITIALIZATION                           */
+      /* ------------------------------------------------------------------- */
+      function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      }
+
+      function applyLanguage(lang) {
+        if (!i18n[lang]) return;
+        currentLang = lang;
+        htmlEl.setAttribute('lang', t().htmlLang);
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        const d = t();
+        setText('brandTitle', d.brandTitle);
+        setText('brandBadge', d.brandBadge);
+        setText('brandSubtitle', d.brandSubtitle);
+        setText('navBigo', d.navBigo);
+        setText('navLinear', d.navLinear);
+        setText('navDiscrete', d.navDiscrete);
+        setText('navGraphs', d.navGraphs);
+        setText('navQuiz', d.navQuiz);
+
+        document.querySelectorAll('.reset-btn-text').forEach(el => { el.textContent = d.resetBtn; });
+
+        setText('bigoTag', d.bigoTag);
+        setText('bigoTitle', d.bigoTitle);
+        setText('bigoDesc', d.bigoDesc);
+        setText('bigoParamsHeading', d.bigoParamsHeading);
+        document.querySelectorAll('.lbl-max').forEach(el => { el.textContent = d.maxLabel; });
+        document.querySelectorAll('.lbl-const').forEach(el => { el.textContent = d.constLabel; });
+        document.querySelectorAll('.lbl-thresh').forEach(el => { el.textContent = d.threshLabel; });
+        setText('activeCurvesLabel', d.activeCurvesLabel);
+        setText('upperBoundTitle', d.upperBoundTitle);
+        setText('testingBoundPrefix', d.testingBoundPrefix);
+        setText('withConst', d.withConst);
+        setText('forAllN', d.forAllN);
+        setText('bigoChartTitle', d.bigoChartTitle);
+        setText('bigoShadedLegend', d.bigoShadedLegend);
+        setText('opsCountAt', d.opsCountAt);
+
+        setText('linearTag', d.linearTag);
+        setText('linearTitle', d.linearTitle);
+        setText('linearDesc', d.linearDesc);
+        document.querySelectorAll('.eigenspaces-lbl').forEach(el => { el.textContent = d.eigenspacesLabel; });
+        setText('presetsHeading', d.presetsHeading);
+        setText('presetIdentity', d.presetIdentity);
+        setText('presetRotate', d.presetRotate);
+        setText('presetShear', d.presetShear);
+        setText('presetScale', d.presetScale);
+        setText('presetReflect', d.presetReflect);
+        setText('presetSingular', d.presetSingular);
+        document.querySelectorAll('.col1-lbl').forEach(el => { el.textContent = d.col1; });
+        document.querySelectorAll('.col2-lbl').forEach(el => { el.textContent = d.col2; });
+        setText('detLabel', d.detLabel);
+        setText('traceLabel', d.traceLabel);
+        setText('rankLabel', d.rankLabel);
+        setText('eigenLabel', d.eigenLabel);
+
+        setText('discreteTag', d.discreteTag);
+        setText('discreteTitle', d.discreteTitle);
+        setText('modExpHeading', d.modExpHeading);
+        document.querySelectorAll('.lbl-base').forEach(el => { el.textContent = d.baseLabel; });
+        document.querySelectorAll('.lbl-exp').forEach(el => { el.textContent = d.expLabel; });
+        document.querySelectorAll('.lbl-mod').forEach(el => { el.textContent = d.modLabel; });
+        setText('squareMultTitle', d.squareMultTitle);
+        setText('rsaHeading', d.rsaHeading);
+        document.querySelectorAll('.lbl-prime').forEach(el => { el.textContent = d.primeLabel; });
+        document.querySelectorAll('.lbl-msg').forEach(el => { el.textContent = d.msgLabel; });
+        setText('pubKeyLabel', d.pubKeyLabel);
+        setText('privKeyLabel', d.privKeyLabel);
+        setText('encryptLabel', d.encryptLabel);
+        setText('decryptLabel', d.decryptLabel);
+
+        setText('graphsTag', d.graphsTag);
+        setText('graphsTitle', d.graphsTitle);
+        setText('graphsDesc', d.graphsDesc);
+        setText('relaxLabel', d.relaxLabel);
+        setText('algoDijkstra', d.algoDijkstra);
+        setText('algoBfs', d.algoBfs);
+        setText('algoDfs', d.algoDfs);
+        setText('stepBtnText', d.stepBtn);
+        setText('graphPlayLabel', autoPlayTimer ? d.pauseBtn : d.autoPlayBtn);
+        setText('speedLabel', d.speedLabel);
+        setText('weightsBtnText', d.weightsBtn);
+        setText('legendSource', d.legendSource);
+        setText('legendTarget', d.legendTarget);
+        setText('legendActive', d.legendActive);
+        setText('legendVisited', d.legendVisited);
+        setText('graphInspectorHeading', d.graphInspectorHeading);
+        setText('frontierHeading', d.frontierHeading);
+        setText('colVertex', d.colVertex);
+        setText('colDist', d.colDist);
+        setText('colParent', d.colParent);
+        setText('colState', d.colState);
+
+        setText('quizTag', d.quizTag);
+        setText('quizTitle', d.quizTitle);
+        setText('scoreLabel', d.scoreLabel);
+        setText('streakLabel', d.streakLabel);
+        setText('quizRestartBtn', d.restartArenaBtn);
+        setText('nextChallengeBtnText', d.nextChallengeBtn);
+        setText('proofPlaceholderTitle', d.proofPlaceholderTitle);
+        setText('proofPlaceholderDesc', d.proofPlaceholderDesc);
+        setText('footerLeft', d.footerLeft);
+        setText('footerRight', d.footerRight);
+
+        applyTheme();
+        updateBigO();
+        updateLinearAlgebra();
+        updateModularLab();
+        updateRSA();
+        updateGraphInspector();
+        renderQuizQuestion();
+      }
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+      });
+
+      generateGraph(false);
+      applyLanguage('en');
+
+      window.addEventListener('resize', () => {
+        requestAnimationFrame(redrawActiveCanvases);
+      });
+    })();
+  </script>
+</body>
+</html>
